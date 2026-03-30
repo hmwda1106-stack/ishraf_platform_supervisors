@@ -1,0 +1,5016 @@
+{
+  "info": {
+    "name": "Ishraf Platform Backend API",
+    "_postman_id": "6ce2a7e1-34a3-4b64-8a96-1d2225bc3e92",
+    "description": "Full Postman collection covering every live backend endpoint.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "rootUrl",
+      "value": "https://ishraf-platform-backend-staging.onrender.com"
+    },
+    {
+      "key": "baseUrl",
+      "value": "https://ishraf-platform-backend-staging.onrender.com/api/v1"
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "refreshToken",
+      "value": ""
+    },
+    {
+      "key": "loginIdentifier",
+      "value": "mod87521@gmail.com"
+    },
+    {
+      "key": "loginPassword",
+      "value": ""
+    },
+    {
+      "key": "newPassword",
+      "value": "UpdatedPassword123!"
+    },
+    {
+      "key": "resetToken",
+      "value": ""
+    },
+    {
+      "key": "userId",
+      "value": "1"
+    },
+    {
+      "key": "academicYearId",
+      "value": ""
+    },
+    {
+      "key": "semesterId",
+      "value": ""
+    },
+    {
+      "key": "gradeLevelId",
+      "value": ""
+    },
+    {
+      "key": "classId",
+      "value": ""
+    },
+    {
+      "key": "subjectId",
+      "value": ""
+    },
+    {
+      "key": "subjectOfferingId",
+      "value": ""
+    },
+    {
+      "key": "studentId",
+      "value": ""
+    },
+    {
+      "key": "parentUserId",
+      "value": "48"
+    },
+    {
+      "key": "teacherUserId",
+      "value": "47"
+    },
+    {
+      "key": "supervisorUserId",
+      "value": "50"
+    },
+    {
+      "key": "parentId",
+      "value": "48"
+    },
+    {
+      "key": "assessmentId",
+      "value": ""
+    },
+    {
+      "key": "studentAssessmentId",
+      "value": ""
+    },
+    {
+      "key": "attendanceSessionId",
+      "value": ""
+    },
+    {
+      "key": "attendanceRecordId",
+      "value": ""
+    },
+    {
+      "key": "behaviorRecordId",
+      "value": ""
+    },
+    {
+      "key": "routeId",
+      "value": ""
+    },
+    {
+      "key": "stopId",
+      "value": ""
+    },
+    {
+      "key": "assignmentId",
+      "value": ""
+    },
+    {
+      "key": "routeAssignmentId",
+      "value": ""
+    },
+    {
+      "key": "tripId",
+      "value": ""
+    },
+    {
+      "key": "messageId",
+      "value": ""
+    },
+    {
+      "key": "notificationId",
+      "value": ""
+    },
+    {
+      "key": "otherUserId",
+      "value": "47"
+    },
+    {
+      "key": "homeworkId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "description": "Service health and readiness endpoints mounted outside /api/v1.",
+      "item": [
+        {
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "Purpose: Return liveness information for the deployed service.\n\nRoles: public\n\nAuth: No bearer token required",
+            "url": {
+              "raw": "{{rootUrl}}/health",
+              "host": [
+                "{{rootUrl}}"
+              ],
+              "path": [
+                "health"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Health Ready",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "Purpose: Return readiness information after checking database connectivity.\n\nRoles: public\n\nAuth: No bearer token required",
+            "url": {
+              "raw": "{{rootUrl}}/health/ready",
+              "host": [
+                "{{rootUrl}}"
+              ],
+              "path": [
+                "health",
+                "ready"
+              ],
+              "query": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "description": "Authentication, session lifecycle, password recovery, and current-user endpoints.",
+      "item": [
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Change the current authenticated user password.\n\nRoles: admin, parent, teacher, supervisor, driver\n\nAuth: Bearer access token required\n\nBody schema: ChangePasswordRequest",
+            "url": {
+              "raw": "{{baseUrl}}/auth/change-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "change-password"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"{{loginPassword}}\",\n  \"newPassword\": \"{{newPassword}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Request a password reset token for an active account. Staging usually does not expose resetToken in the response.\n\nRoles: public\n\nAuth: No bearer token required\n\nBody schema: ForgotPasswordRequest",
+            "url": {
+              "raw": "{{baseUrl}}/auth/forgot-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "forgot-password"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identifier\": \"{{loginIdentifier}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Authenticate with email or phone and issue access and refresh tokens.\n\nRoles: public\n\nAuth: No bearer token required\n\nBody schema: LoginRequest",
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identifier\": \"{{loginIdentifier}}\",\n  \"password\": \"{{loginPassword}}\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (pm.response.code === 200 && json?.success && json?.data) {",
+                  "  if (json.data.accessToken) pm.collectionVariables.set('accessToken', json.data.accessToken);",
+                  "  if (json.data.refreshToken) pm.collectionVariables.set('refreshToken', json.data.refreshToken);",
+                  "  if (json.data.user?.id) pm.collectionVariables.set('userId', json.data.user.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Revoke the provided refresh token.\n\nRoles: public\n\nAuth: No bearer token required\n\nBody schema: LogoutRequest",
+            "url": {
+              "raw": "{{baseUrl}}/auth/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "logout"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Current User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return the authenticated active user profile used for frontend bootstrap.\n\nRoles: admin, parent, teacher, supervisor, driver\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Exchange a valid refresh token for a fresh access/refresh pair.\n\nRoles: public\n\nAuth: No bearer token required\n\nBody schema: RefreshTokenRequest",
+            "url": {
+              "raw": "{{baseUrl}}/auth/refresh",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "refresh"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (pm.response.code === 200 && json?.success && json?.data) {",
+                  "  if (json.data.accessToken) pm.collectionVariables.set('accessToken', json.data.accessToken);",
+                  "  if (json.data.refreshToken) pm.collectionVariables.set('refreshToken', json.data.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Reset the password using a valid reset token. Successful reset revokes existing refresh tokens.\n\nRoles: public\n\nAuth: No bearer token required\n\nBody schema: ResetPasswordRequest",
+            "url": {
+              "raw": "{{baseUrl}}/auth/reset-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "reset-password"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"{{resetToken}}\",\n  \"newPassword\": \"{{newPassword}}\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "description": "Admin-only user management endpoints for all roles.",
+      "item": [
+        {
+          "name": "List Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: List users with pagination and filters.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nQuery params: page, limit, sortBy, sortOrder, role, isActive",
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Pagination page number."
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Pagination page size."
+                },
+                {
+                  "key": "sortBy",
+                  "value": "createdAt",
+                  "description": "Sort field whitelist."
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "description": "Sort direction."
+                },
+                {
+                  "key": "role",
+                  "value": "admin",
+                  "description": "Filter by role."
+                },
+                {
+                  "key": "isActive",
+                  "value": "true",
+                  "description": "Filter by active status."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Create a new user for any supported role. profile is role-specific.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: CreateUserRequest",
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"parent\",\n  \"fullName\": \"ولي أمر جديد\",\n  \"email\": \"new-parent@example.com\",\n  \"phone\": \"777111111\",\n  \"password\": \"StrongPassword123!\",\n  \"profile\": {\n    \"address\": \"صنعاء\",\n    \"relationType\": \"father\"\n  }\n}"
+            }
+          }
+        },
+        {
+          "name": "Get User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return one user by id.\n\nRoles: admin\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{userId}}"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Update basic user fields and role-specific profile fields.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: UpdateUserRequest",
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{userId}}"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"اسم محدث\",\n  \"phone\": \"777111112\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update User Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Activate or deactivate a user account.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: UpdateUserStatusRequest",
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{userId}}",
+                "status"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isActive\": false\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Academic Structure",
+      "description": "Admin-only academic years, semesters, grade levels, classes, subjects, and staff assignment endpoints.",
+      "item": [
+        {
+          "name": "List Academic Years",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: List all academic years.\n\nRoles: admin\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/academic-structure/academic-years",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "academic-structure",
+                "academic-years"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Create Academic Year",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Create an academic year record.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: CreateAcademicYearRequest",
+            "url": {
+              "raw": "{{baseUrl}}/academic-structure/academic-years",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "academic-structure",
+                "academic-years"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"2026-2027\",\n  \"startDate\": \"2026-09-01\",\n  \"endDate\": \"2027-06-30\",\n  \"isActive\": false\n}"
+            }
+          }
+        },
+        {
+          "name": "List Semesters",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: List semesters for the selected academic year.\n\nRoles: admin\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/academic-structure/academic-years/{{academicYearId}}/semesters",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "academic-structure",
+                "academic-years",
+                "{{academicYearId}}",
+                "semesters"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Create Semester",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Create a semester under the selected academic year.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: CreateSemesterRequest",
+            "url": {
+              "raw": "{{baseUrl}}/academic-structure/academic-years/{{academicYearId}}/semesters",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "academic-structure",
+                "academic-years",
+                "{{academicYearId}}",
+                "semesters"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"الفصل الثاني\",\n  \"startDate\": \"2026-01-20\",\n  \"endDate\": \"2026-06-20\",\n  \"isActive\": false\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Academic Year",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return one academic year by id.\n\nRoles: admin\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/academic-structure/academic-years/{{academicYearId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "academic-structure",
+                "academic-years",
+                "{{academicYearId}}"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Update Academic Year",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Update an academic year.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: UpdateAcademicYearRequest",
+            "url": {
+              "raw": "{{baseUrl}}/academic-structure/academic-years/{{academicYearId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "academic-structure",
+                "academic-years",
+                "{{academicYearId}}"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isActive\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Activate Academic Year",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Activate the selected academic year and deactivate any other active year.\n\nRoles: admin\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/academic-structure/academic-years/{{academicYearId}}/activate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "academic-structure",
+                "academic-years",
+                "{{academicYearId}}",
+                "activate"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "List Classes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: List classes with optional academic year, grade level, and activation filters.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nQuery params: academicYearId, gradeLevelId, isActive",
+            "url": {
+              "raw": "{{baseUrl}}/academic-structure/classes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "academic-structure",
+                "classes"
+              ],
+              "query": [
+                {
+                  "key": "academicYearId",
+                  "value": "1",
+                  "description": "Filter by academic year id."
+                },
+                {
+                  "key": "gradeLevelId",
+                  "value": "1",
+                  "description": "Filter by grade level id."
+                },
+                {
+                  "key": "isActive",
+                  "value": "true",
+                  "description": "Filter by activation state."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Class",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Create a class section.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: CreateClassRequest",
+            "url": {
+              "raw": "{{baseUrl}}/academic-structure/classes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "academic-structure",
+                "classes"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"gradeLevelId\": \"1\",\n  \"academicYearId\": \"1\",\n  \"className\": \"الصف الأول\",\n  \"section\": \"B\",\n  \"capacity\": 30,\n  \"isActive\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Class",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return one class by id.\n\nRoles: admin\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/academic-structure/classes/{{classId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "academic-structure",
+                "classes",
+                "{{classId}}"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "[NEW] Update Class",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Update class operational fields such as section, capacity, and activation state without changing academic linkage.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: UpdateClassRequest\n\nNote: [NEW] This is the canonical management surface for class corrections and activation updates.",
+            "url": {
+              "raw": "{{baseUrl}}/academic-structure/classes/{{classId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "academic-structure",
+                "classes",
+                "{{classId}}"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"section\": \"C\",\n  \"capacity\": 30,\n  \"isActive\": false\n}"
+            }
+          }
+        },
+        {
+          "name": "[NEW] Get Active Academic Context",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return the active academic year and active semester used by operational admin surfaces.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nNote: [NEW] This is the canonical global context for daily admin operations.\n\nNote: If either the active academic year or active semester is missing, operational endpoints may return 409 Academic context not configured.",
+            "url": {
+              "raw": "{{baseUrl}}/academic-structure/context/active",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "academic-structure",
+                "context",
+                "active"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "[NEW] Update Active Academic Context",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Atomically set the active academic year and active semester for operational surfaces.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: ActiveAcademicContextRequest\n\nNote: [NEW] Use this as the canonical activation flow instead of activating the academic year and semester separately.\n\nNote: The selected semester must belong to the selected academic year.",
+            "url": {
+              "raw": "{{baseUrl}}/academic-structure/context/active",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "academic-structure",
+                "context",
+                "active"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"academicYearId\": \"1\",\n  \"semesterId\": \"2\"\n}"
+            }
+          }
+        },
+        {
+          "name": "List Grade Levels",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: List grade levels.\n\nRoles: admin\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/academic-structure/grade-levels",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "academic-structure",
+                "grade-levels"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Create Grade Level",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Create a grade level.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: CreateGradeLevelRequest",
+            "url": {
+              "raw": "{{baseUrl}}/academic-structure/grade-levels",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "academic-structure",
+                "grade-levels"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"الصف الرابع\",\n  \"levelOrder\": 4\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Semester",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Update semester dates or activation state.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: UpdateSemesterRequest",
+            "url": {
+              "raw": "{{baseUrl}}/academic-structure/semesters/{{semesterId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "academic-structure",
+                "semesters",
+                "{{semesterId}}"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isActive\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "[NEW] List Subject Offerings",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: List subject offerings with optional academic year, semester, grade level, subject, and activation filters.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nQuery params: academicYearId, semesterId, gradeLevelId, subjectId, isActive\n\nNote: [NEW] This is the canonical list surface for semester-aware subject availability.",
+            "url": {
+              "raw": "{{baseUrl}}/academic-structure/subject-offerings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "academic-structure",
+                "subject-offerings"
+              ],
+              "query": [
+                {
+                  "key": "academicYearId",
+                  "value": "1",
+                  "description": "Filter by academic year id."
+                },
+                {
+                  "key": "semesterId",
+                  "value": "1",
+                  "description": "Filter by semester id."
+                },
+                {
+                  "key": "gradeLevelId",
+                  "value": "1",
+                  "description": "Filter by grade level id."
+                },
+                {
+                  "key": "subjectId",
+                  "value": "1",
+                  "description": "Filter by subject id."
+                },
+                {
+                  "key": "isActive",
+                  "value": "true",
+                  "description": "Filter by activation state."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "[NEW] Create Subject Offering",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Link an existing subject to a semester without changing the subject master data.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: CreateSubjectOfferingRequest\n\nNote: [NEW] Subject offerings are the official semester-aware layer for subject availability.",
+            "url": {
+              "raw": "{{baseUrl}}/academic-structure/subject-offerings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "academic-structure",
+                "subject-offerings"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subjectId\": \"1\",\n  \"semesterId\": \"1\",\n  \"isActive\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "[NEW] Get Subject Offering",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return one subject offering by id.\n\nRoles: admin\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/academic-structure/subject-offerings/{{subjectOfferingId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "academic-structure",
+                "subject-offerings",
+                "{{subjectOfferingId}}"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "[NEW] Update Subject Offering",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Update a subject offering activation state. This round only supports isActive changes.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: UpdateSubjectOfferingRequest",
+            "url": {
+              "raw": "{{baseUrl}}/academic-structure/subject-offerings/{{subjectOfferingId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "academic-structure",
+                "subject-offerings",
+                "{{subjectOfferingId}}"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isActive\": false\n}"
+            }
+          }
+        },
+        {
+          "name": "List Subjects",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: List subjects with optional grade level and activation filters.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nQuery params: gradeLevelId, isActive",
+            "url": {
+              "raw": "{{baseUrl}}/academic-structure/subjects",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "academic-structure",
+                "subjects"
+              ],
+              "query": [
+                {
+                  "key": "gradeLevelId",
+                  "value": "1",
+                  "description": "Filter by grade level id."
+                },
+                {
+                  "key": "isActive",
+                  "value": "true",
+                  "description": "Filter by activation state."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Subject",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Create a subject under a grade level. Subjects remain grade-level master data and do not accept semesterId.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: CreateSubjectRequest\n\nNote: Use subject-offerings to link a subject into one or more semesters without changing the subject master record.",
+            "url": {
+              "raw": "{{baseUrl}}/academic-structure/subjects",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "academic-structure",
+                "subjects"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"العلوم\",\n  \"gradeLevelId\": \"1\",\n  \"code\": \"SCI-1\",\n  \"isActive\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Subject",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return one subject by id.\n\nRoles: admin\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/academic-structure/subjects/{{subjectId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "academic-structure",
+                "subjects",
+                "{{subjectId}}"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "[NEW] Update Subject",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Update subject master-data fields such as name, code, and activation state while keeping the subject grade-level-scoped.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: UpdateSubjectRequest\n\nNote: [NEW] Subjects remain master data; semester-specific availability still belongs to subject-offerings.",
+            "url": {
+              "raw": "{{baseUrl}}/academic-structure/subjects/{{subjectId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "academic-structure",
+                "subjects",
+                "{{subjectId}}"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"العلوم المتقدمة\",\n  \"code\": null,\n  \"isActive\": false\n}"
+            }
+          }
+        },
+        {
+          "name": "List Supervisor Assignments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: List supervisor assignments with optional academic year, class, and supervisor filters.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nQuery params: academicYearId, classId, supervisorId",
+            "url": {
+              "raw": "{{baseUrl}}/academic-structure/supervisor-assignments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "academic-structure",
+                "supervisor-assignments"
+              ],
+              "query": [
+                {
+                  "key": "academicYearId",
+                  "value": "1",
+                  "description": "Filter by academic year id."
+                },
+                {
+                  "key": "classId",
+                  "value": "1",
+                  "description": "Filter by class id."
+                },
+                {
+                  "key": "supervisorId",
+                  "value": "1",
+                  "description": "Filter by supervisor identifier. Accepts the supervisor user id from /users?role=supervisor or the legacy supervisor profile id."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Supervisor Assignment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Assign a supervisor to a class for an academic year. supervisorId accepts the supervisor user id from /users?role=supervisor or the legacy supervisor profile id.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: CreateSupervisorAssignmentRequest\n\nNote: Frontend should send the supervisor user id returned by GET /users?role=supervisor. The backend resolves it internally to the stored supervisor profile id.\n\nNote: Legacy integrations may still send the supervisor profile id directly.\n\nNote: If the same value matches a supervisor user id and a different supervisor profile id, the backend rejects the request with SUPERVISOR_ID_AMBIGUOUS instead of guessing.",
+            "url": {
+              "raw": "{{baseUrl}}/academic-structure/supervisor-assignments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "academic-structure",
+                "supervisor-assignments"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"supervisorId\": \"50\",\n  \"classId\": \"1\",\n  \"academicYearId\": \"1\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[NEW] Get Supervisor Assignment",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return one supervisor assignment by id.\n\nRoles: admin\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/academic-structure/supervisor-assignments/{{supervisorAssignmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "academic-structure",
+                "supervisor-assignments",
+                "{{supervisorAssignmentId}}"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "[NEW] Update Supervisor Assignment",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Update a supervisor assignment for administrative corrections. supervisorId accepts the supervisor user id from /users?role=supervisor or the legacy supervisor profile id.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: UpdateSupervisorAssignmentRequest\n\nNote: [NEW] Supervisor assignment updates preserve the existing compatibility and supervisor-resolution rules.",
+            "url": {
+              "raw": "{{baseUrl}}/academic-structure/supervisor-assignments/{{supervisorAssignmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "academic-structure",
+                "supervisor-assignments",
+                "{{supervisorAssignmentId}}"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"classId\": \"2\",\n  \"academicYearId\": \"1\"\n}"
+            }
+          }
+        },
+        {
+          "name": "List Teacher Assignments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: List teacher assignments with optional academic year, class, subject, and teacher filters.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nQuery params: academicYearId, classId, subjectId, teacherId",
+            "url": {
+              "raw": "{{baseUrl}}/academic-structure/teacher-assignments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "academic-structure",
+                "teacher-assignments"
+              ],
+              "query": [
+                {
+                  "key": "academicYearId",
+                  "value": "1",
+                  "description": "Filter by academic year id."
+                },
+                {
+                  "key": "classId",
+                  "value": "1",
+                  "description": "Filter by class id."
+                },
+                {
+                  "key": "subjectId",
+                  "value": "1",
+                  "description": "Filter by subject id."
+                },
+                {
+                  "key": "teacherId",
+                  "value": "1",
+                  "description": "Filter by teacher identifier. Accepts the teacher user id from /users?role=teacher or the legacy teacher profile id."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Teacher Assignment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Assign a teacher to a class and subject for an academic year. teacherId accepts the teacher user id from /users?role=teacher or the legacy teacher profile id.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: CreateTeacherAssignmentRequest\n\nNote: Frontend should send the teacher user id returned by GET /users?role=teacher. The backend resolves it internally to the stored teacher profile id.\n\nNote: Legacy integrations may still send the teacher profile id directly.\n\nNote: If the same value matches a teacher user id and a different teacher profile id, the backend rejects the request with TEACHER_ID_AMBIGUOUS instead of guessing.",
+            "url": {
+              "raw": "{{baseUrl}}/academic-structure/teacher-assignments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "academic-structure",
+                "teacher-assignments"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"teacherId\": \"47\",\n  \"classId\": \"1\",\n  \"subjectId\": \"1\",\n  \"academicYearId\": \"1\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[NEW] Get Teacher Assignment",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return one teacher assignment by id.\n\nRoles: admin\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/academic-structure/teacher-assignments/{{teacherAssignmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "academic-structure",
+                "teacher-assignments",
+                "{{teacherAssignmentId}}"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "[NEW] Update Teacher Assignment",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Update a teacher assignment for administrative corrections. teacherId accepts the teacher user id from /users?role=teacher or the legacy teacher profile id.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: UpdateTeacherAssignmentRequest\n\nNote: [NEW] Teacher assignment updates preserve the existing compatibility and teacher-resolution rules.",
+            "url": {
+              "raw": "{{baseUrl}}/academic-structure/teacher-assignments/{{teacherAssignmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "academic-structure",
+                "teacher-assignments",
+                "{{teacherAssignmentId}}"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"classId\": \"2\",\n  \"subjectId\": \"4\",\n  \"academicYearId\": \"1\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Students",
+      "description": "Admin-only student lifecycle, parent linking, and promotion endpoints.",
+      "item": [
+        {
+          "name": "List Students",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: List students for the active academic year with pagination and filters.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nQuery params: page, limit, sortBy, sortOrder, classId, academicYearId, status, gender\n\nNote: This operational surface is active-year-aware.\n\nNote: If academicYearId is provided, it must match the active academic year or the request is rejected.",
+            "url": {
+              "raw": "{{baseUrl}}/students",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "students"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Pagination page number."
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Pagination page size."
+                },
+                {
+                  "key": "sortBy",
+                  "value": "createdAt",
+                  "description": "Sort field whitelist."
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "description": "Sort direction."
+                },
+                {
+                  "key": "classId",
+                  "value": "1",
+                  "description": "Filter by class id."
+                },
+                {
+                  "key": "academicYearId",
+                  "value": "1",
+                  "description": "Filter by academic year id."
+                },
+                {
+                  "key": "status",
+                  "value": "active",
+                  "description": "Filter by student status."
+                },
+                {
+                  "key": "gender",
+                  "value": "male",
+                  "description": "Filter by gender."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Student",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Create a student in the selected class and create the matching academic enrollment record inside the same transaction.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: CreateStudentRequest\n\nNote: The selected class determines the academic year for the initial enrollment.",
+            "url": {
+              "raw": "{{baseUrl}}/students",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "students"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"academicNo\": \"SEED-STU-010\",\n  \"fullName\": \"طالب جديد\",\n  \"dateOfBirth\": \"2018-09-10\",\n  \"gender\": \"male\",\n  \"classId\": \"1\",\n  \"status\": \"active\",\n  \"enrollmentDate\": \"2025-09-01\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Student",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return one student by id using the active academic year as the current academic state.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nNote: This operational detail surface requires an active academic context.",
+            "url": {
+              "raw": "{{baseUrl}}/students/{{studentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "students",
+                "{{studentId}}"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Update Student",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Update student profile fields and lifecycle status.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: UpdateStudentRequest",
+            "url": {
+              "raw": "{{baseUrl}}/students/{{studentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "students",
+                "{{studentId}}"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"طالب محدث\",\n  \"status\": \"suspended\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[NEW] List Student Academic Enrollments By Student",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return all academic enrollments for one student across years.\n\nRoles: admin\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/students/{{studentId}}/academic-enrollments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "students",
+                "{{studentId}}",
+                "academic-enrollments"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "[NEW] Create Student Academic Enrollment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Create or upsert one academic enrollment for the selected student.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: CreateStudentAcademicEnrollmentRequest\n\nNote: [NEW] This is the canonical academic-management surface for assigning a student into a class for a specific year.",
+            "url": {
+              "raw": "{{baseUrl}}/students/{{studentId}}/academic-enrollments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "students",
+                "{{studentId}}",
+                "academic-enrollments"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"academicYearId\": \"2\",\n  \"classId\": \"2\"\n}"
+            }
+          }
+        },
+        {
+          "name": "List Student Parents",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return parent links for one student.\n\nRoles: admin\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/students/{{studentId}}/parents",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "students",
+                "{{studentId}}",
+                "parents"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Link Parent to Student",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Link an existing parent to a student. parentId may be either the parent user id returned by /users?role=parent or the underlying parent profile id.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: LinkStudentParentRequest\n\nNote: The backend resolves parentId to the stored parent profile id automatically. Prefer sending the user id returned by /users?role=parent in admin frontend flows.",
+            "url": {
+              "raw": "{{baseUrl}}/students/{{studentId}}/parents",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "students",
+                "{{studentId}}",
+                "parents"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"parentId\": \"48\",\n  \"relationType\": \"mother\",\n  \"isPrimary\": false\n}"
+            }
+          }
+        },
+        {
+          "name": "Promote Student",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Promote a student to another class for a target academic year while writing structured enrollment state and promotion history.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: PromoteStudentRequest\n\nNote: The promotion writes the target academic enrollment even when the target year is not active yet.\n\nNote: students.class_id is only synchronized immediately when the target year is the active academic year.",
+            "url": {
+              "raw": "{{baseUrl}}/students/{{studentId}}/promotions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "students",
+                "{{studentId}}",
+                "promotions"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"toClassId\": \"2\",\n  \"academicYearId\": \"2\",\n  \"notes\": \"ترقية إلى الصف التالي\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Set Primary Parent",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Mark one linked parent as the primary parent for that student. parentId may be either the parent user id returned by /users?role=parent or the underlying parent profile id.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nNote: The backend resolves parentId to the stored parent profile id automatically. Prefer sending the user id returned by /users?role=parent in admin frontend flows.",
+            "url": {
+              "raw": "{{baseUrl}}/students/{{studentId}}/parents/{{parentId}}/primary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "students",
+                "{{studentId}}",
+                "parents",
+                "{{parentId}}",
+                "primary"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "[NEW] List Student Academic Enrollments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: List student academic enrollments for academic management and year preparation.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nQuery params: studentId, academicYearId, classId\n\nNote: [NEW] This is an academic-management surface, not a daily operational roster.",
+            "url": {
+              "raw": "{{baseUrl}}/students/academic-enrollments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "students",
+                "academic-enrollments"
+              ],
+              "query": [
+                {
+                  "key": "studentId",
+                  "value": "1",
+                  "description": "Filter by student id."
+                },
+                {
+                  "key": "academicYearId",
+                  "value": "1",
+                  "description": "Filter by academic year id."
+                },
+                {
+                  "key": "classId",
+                  "value": "1",
+                  "description": "Filter by class id."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "[NEW] Update Student Academic Enrollment",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Update one student academic enrollment record.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: UpdateStudentAcademicEnrollmentRequest",
+            "url": {
+              "raw": "{{baseUrl}}/students/academic-enrollments/{{enrollmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "students",
+                "academic-enrollments",
+                "{{enrollmentId}}"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"classId\": \"3\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[NEW] Bulk Upsert Student Academic Enrollments",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Create or update many student academic enrollments for structured promotion and year preparation.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: BulkStudentAcademicEnrollmentsRequest\n\nNote: [NEW] Use this for organized year-transition work instead of mutating students one by one.",
+            "url": {
+              "raw": "{{baseUrl}}/students/academic-enrollments/bulk",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "students",
+                "academic-enrollments",
+                "bulk"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"studentId\": \"1\",\n      \"academicYearId\": \"2\",\n      \"classId\": \"2\"\n    },\n    {\n      \"studentId\": \"2\",\n      \"academicYearId\": \"2\",\n      \"classId\": \"2\"\n    }\n  ]\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Attendance",
+      "description": "Session-based attendance endpoints used by admin, teachers, and supervisors.",
+      "item": [
+        {
+          "name": "Update Attendance Record",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Update one attendance record status or notes.\n\nRoles: admin, teacher, supervisor\n\nAuth: Bearer access token required\n\nBody schema: UpdateAttendanceRecordRequest\n\nSide effects: If the record changes into absent, the internal automation service may create notifications for linked parents.",
+            "url": {
+              "raw": "{{baseUrl}}/attendance/records/{{attendanceId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "attendance",
+                "records",
+                "{{attendanceId}}"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"late\",\n  \"notes\": \"وصل متأخرًا\"\n}"
+            }
+          }
+        },
+        {
+          "name": "List Attendance Sessions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: List attendance sessions for the active academic context with pagination. There is no root /attendance endpoint.\n\nRoles: admin, teacher, supervisor\n\nAuth: Bearer access token required\n\nQuery params: page, limit, sortBy, sortOrder, classId, subjectId, teacherId, academicYearId, semesterId, sessionDate, dateFrom, dateTo\n\nNote: Empty collections return 200 with items=[] and pagination metadata.\n\nNote: This operational list is scoped to the active academic year and active semester.\n\nNote: teacherId filter accepts the teacher user id returned by GET /users?role=teacher or the legacy teacher profile id. Prefer the user id in admin frontend flows.",
+            "url": {
+              "raw": "{{baseUrl}}/attendance/sessions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "attendance",
+                "sessions"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Pagination page number."
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Pagination page size."
+                },
+                {
+                  "key": "sortBy",
+                  "value": "sessionDate",
+                  "description": "Sort field whitelist."
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "description": "Sort direction."
+                },
+                {
+                  "key": "classId",
+                  "value": "1",
+                  "description": "Filter by class id."
+                },
+                {
+                  "key": "subjectId",
+                  "value": "1",
+                  "description": "Filter by subject id."
+                },
+                {
+                  "key": "teacherId",
+                  "value": "1",
+                  "description": "Filter by teacher identifier. Accepts the teacher user id from /users?role=teacher or the legacy teacher profile id."
+                },
+                {
+                  "key": "academicYearId",
+                  "value": "1",
+                  "description": "Filter by academic year id."
+                },
+                {
+                  "key": "semesterId",
+                  "value": "1",
+                  "description": "Filter by semester id."
+                },
+                {
+                  "key": "sessionDate",
+                  "value": "2026-03-30",
+                  "description": "Filter by exact session date."
+                },
+                {
+                  "key": "dateFrom",
+                  "value": "2026-03-30",
+                  "description": "Filter from session date."
+                },
+                {
+                  "key": "dateTo",
+                  "value": "2026-03-30",
+                  "description": "Filter to session date."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Attendance Session",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Create an attendance session inside the active academic context. Admin teacherId accepts the teacher user id from /users?role=teacher or the legacy teacher profile id.\n\nRoles: admin, teacher\n\nAuth: Bearer access token required\n\nBody schema: CreateAttendanceSessionRequest\n\nNote: academicYearId and semesterId may be omitted; the backend resolves the active academic context automatically.\n\nNote: If academicYearId or semesterId is sent, it must match the active context.\n\nNote: The selected subjectId must have an active subject offering for the resolved semester.\n\nNote: Admin frontend flows should send teacherId as the teacher user id returned by GET /users?role=teacher.",
+            "url": {
+              "raw": "{{baseUrl}}/attendance/sessions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "attendance",
+                "sessions"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"classId\": \"1\",\n  \"subjectId\": \"1\",\n  \"academicYearId\": \"1\",\n  \"semesterId\": \"1\",\n  \"sessionDate\": \"2026-03-30\",\n  \"periodNo\": 1,\n  \"title\": \"حصة الرياضيات\",\n  \"notes\": \"اختبار سريع\",\n  \"teacherId\": \"47\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Attendance Session",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return one attendance session including its student roster.\n\nRoles: admin, teacher, supervisor\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/attendance/sessions/{{attendanceSessionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "attendance",
+                "sessions",
+                "{{attendanceSessionId}}"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Save Attendance Records",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Save the full attendance roster snapshot for one session.\n\nRoles: admin, teacher, supervisor\n\nAuth: Bearer access token required\n\nBody schema: SaveAttendanceRecordsRequest\n\nSide effects: Any newly absent record can trigger parent notifications through the internal automation service.",
+            "url": {
+              "raw": "{{baseUrl}}/attendance/sessions/{{attendanceSessionId}}/records",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "attendance",
+                "sessions",
+                "{{attendanceSessionId}}",
+                "records"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"records\": [\n    {\n      \"studentId\": \"1\",\n      \"status\": \"present\"\n    },\n    {\n      \"studentId\": \"2\",\n      \"status\": \"absent\",\n      \"notes\": \"غياب بدون عذر\"\n    }\n  ]\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Assessments",
+      "description": "Assessment types, assessments, and student score roster endpoints.",
+      "item": [
+        {
+          "name": "List Assessments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: List assessments for the active academic context with pagination and filters.\n\nRoles: admin, teacher\n\nAuth: Bearer access token required\n\nQuery params: page, limit, sortBy, sortOrder, assessmentTypeId, classId, subjectId, teacherId, academicYearId, semesterId, assessmentDate, dateFrom, dateTo, isPublished\n\nNote: This operational list is scoped to the active academic year and active semester.\n\nNote: teacherId filter accepts the teacher user id returned by GET /users?role=teacher or the legacy teacher profile id. Prefer the user id in admin frontend flows.",
+            "url": {
+              "raw": "{{baseUrl}}/assessments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessments"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Pagination page number."
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Pagination page size."
+                },
+                {
+                  "key": "sortBy",
+                  "value": "assessmentDate",
+                  "description": "Sort field whitelist."
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "description": "Sort direction."
+                },
+                {
+                  "key": "assessmentTypeId",
+                  "value": "1",
+                  "description": "Filter by assessment type id."
+                },
+                {
+                  "key": "classId",
+                  "value": "1",
+                  "description": "Filter by class id."
+                },
+                {
+                  "key": "subjectId",
+                  "value": "1",
+                  "description": "Filter by subject id."
+                },
+                {
+                  "key": "teacherId",
+                  "value": "1",
+                  "description": "Filter by teacher identifier. Accepts the teacher user id from /users?role=teacher or the legacy teacher profile id."
+                },
+                {
+                  "key": "academicYearId",
+                  "value": "1",
+                  "description": "Filter by academic year id."
+                },
+                {
+                  "key": "semesterId",
+                  "value": "1",
+                  "description": "Filter by semester id."
+                },
+                {
+                  "key": "assessmentDate",
+                  "value": "2026-03-30",
+                  "description": "Filter by exact assessment date."
+                },
+                {
+                  "key": "dateFrom",
+                  "value": "2026-03-30",
+                  "description": "Filter from assessment date."
+                },
+                {
+                  "key": "dateTo",
+                  "value": "2026-03-30",
+                  "description": "Filter to assessment date."
+                },
+                {
+                  "key": "isPublished",
+                  "value": "true",
+                  "description": "Filter by publication state."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Assessment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Create an assessment inside the active academic context. Teachers may omit teacherId and rely on the authenticated teacher profile. Admin teacherId accepts the teacher user id from /users?role=teacher or the legacy teacher profile id.\n\nRoles: admin, teacher\n\nAuth: Bearer access token required\n\nBody schema: CreateAssessmentRequest\n\nNote: academicYearId and semesterId may be omitted; the backend resolves the active academic context automatically.\n\nNote: If academicYearId or semesterId is sent, it must match the active context.\n\nNote: The selected subjectId must have an active subject offering for the resolved semester.\n\nNote: Admin frontend flows should send teacherId as the teacher user id returned by GET /users?role=teacher.",
+            "url": {
+              "raw": "{{baseUrl}}/assessments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessments"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"assessmentTypeId\": \"1\",\n  \"classId\": \"1\",\n  \"subjectId\": \"1\",\n  \"teacherId\": \"47\",\n  \"academicYearId\": \"1\",\n  \"semesterId\": \"1\",\n  \"title\": \"اختبار قصير 2\",\n  \"description\": \"الوحدة الثانية\",\n  \"maxScore\": 20,\n  \"weight\": 10,\n  \"assessmentDate\": \"2026-03-30\",\n  \"isPublished\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Assessment",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return one assessment detail record.\n\nRoles: admin, teacher\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/assessments/{{assessmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessments",
+                "{{assessmentId}}"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Get Assessment Scores",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return the score roster for one assessment.\n\nRoles: admin, teacher\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/assessments/{{assessmentId}}/scores",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessments",
+                "{{assessmentId}}",
+                "scores"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Save Assessment Scores",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Create or update the full score roster for an assessment.\n\nRoles: admin, teacher\n\nAuth: Bearer access token required\n\nBody schema: SaveAssessmentScoresRequest",
+            "url": {
+              "raw": "{{baseUrl}}/assessments/{{assessmentId}}/scores",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessments",
+                "{{assessmentId}}",
+                "scores"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"records\": [\n    {\n      \"studentId\": \"1\",\n      \"score\": 18,\n      \"remarks\": \"ممتاز\"\n    },\n    {\n      \"studentId\": \"2\",\n      \"score\": 14,\n      \"remarks\": \"جيد\"\n    }\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Student Assessment Score",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Update one student score row.\n\nRoles: admin, teacher\n\nAuth: Bearer access token required\n\nBody schema: UpdateStudentAssessmentScoreRequest",
+            "url": {
+              "raw": "{{baseUrl}}/assessments/scores/{{studentAssessmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessments",
+                "scores",
+                "{{studentAssessmentId}}"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"score\": 19,\n  \"remarks\": \"تحسن واضح\"\n}"
+            }
+          }
+        },
+        {
+          "name": "List Assessment Types",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: List assessment types.\n\nRoles: admin, teacher\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/assessments/types",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessments",
+                "types"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Create Assessment Type",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Create a reusable assessment type.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: CreateAssessmentTypeRequest",
+            "url": {
+              "raw": "{{baseUrl}}/assessments/types",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessments",
+                "types"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"QUIZ\",\n  \"name\": \"Quiz\",\n  \"description\": \"Short quiz\",\n  \"isActive\": true\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Behavior",
+      "description": "Behavior categories, behavior records, and student behavior timelines.",
+      "item": [
+        {
+          "name": "List Behavior Categories",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: List behavior categories used in behavior forms. There is no behaviorType query filter in v1.\n\nRoles: admin, teacher, supervisor\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/behavior/categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "behavior",
+                "categories"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Create Behavior Category",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Create a behavior category definition.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: CreateBehaviorCategoryRequest",
+            "url": {
+              "raw": "{{baseUrl}}/behavior/categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "behavior",
+                "categories"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"NEG-001\",\n  \"name\": \"تأخر متكرر\",\n  \"behaviorType\": \"negative\",\n  \"defaultSeverity\": 3,\n  \"isActive\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "List Behavior Records",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: List behavior records for the active academic context with pagination and filters.\n\nRoles: admin, teacher, supervisor\n\nAuth: Bearer access token required\n\nQuery params: page, limit, sortBy, sortOrder, studentId, behaviorCategoryId, behaviorType, academicYearId, semesterId, teacherId, supervisorId, behaviorDate, dateFrom, dateTo\n\nNote: This operational list is scoped to the active academic year and active semester.\n\nNote: teacherId and supervisorId filters accept the corresponding user ids returned by GET /users or the legacy profile ids. Prefer user ids in admin frontend flows.",
+            "url": {
+              "raw": "{{baseUrl}}/behavior/records",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "behavior",
+                "records"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Pagination page number."
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Pagination page size."
+                },
+                {
+                  "key": "sortBy",
+                  "value": "behaviorDate",
+                  "description": "Sort field whitelist."
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "description": "Sort direction."
+                },
+                {
+                  "key": "studentId",
+                  "value": "1",
+                  "description": "Filter by student id."
+                },
+                {
+                  "key": "behaviorCategoryId",
+                  "value": "1",
+                  "description": "Filter by behavior category id."
+                },
+                {
+                  "key": "behaviorType",
+                  "value": "negative",
+                  "description": "Filter by behavior type."
+                },
+                {
+                  "key": "academicYearId",
+                  "value": "1",
+                  "description": "Filter by academic year id."
+                },
+                {
+                  "key": "semesterId",
+                  "value": "1",
+                  "description": "Filter by semester id."
+                },
+                {
+                  "key": "teacherId",
+                  "value": "1",
+                  "description": "Filter by teacher identifier. Accepts the teacher user id from /users?role=teacher or the legacy teacher profile id."
+                },
+                {
+                  "key": "supervisorId",
+                  "value": "1",
+                  "description": "Filter by supervisor identifier. Accepts the supervisor user id from /users?role=supervisor or the legacy supervisor profile id."
+                },
+                {
+                  "key": "behaviorDate",
+                  "value": "2026-03-30",
+                  "description": "Filter by exact behavior date."
+                },
+                {
+                  "key": "dateFrom",
+                  "value": "2026-03-30",
+                  "description": "Filter from behavior date."
+                },
+                {
+                  "key": "dateTo",
+                  "value": "2026-03-30",
+                  "description": "Filter to behavior date."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Behavior Record",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Create a behavior record inside the active academic context. teacherId and supervisorId accept the matching user ids from /users or the legacy profile ids.\n\nRoles: admin, teacher, supervisor\n\nAuth: Bearer access token required\n\nBody schema: CreateBehaviorRecordRequest\n\nNote: academicYearId and semesterId may be omitted; the backend resolves the active academic context automatically.\n\nNote: If academicYearId or semesterId is sent, it must match the active context.\n\nNote: Admin frontend flows should send teacherId or supervisorId as the selected account user id from GET /users?role=teacher|supervisor.\n\nNote: Legacy integrations may still send teacher/supervisor profile ids directly.\n\nSide effects: Negative behavior categories trigger parent notifications through the internal automation service.",
+            "url": {
+              "raw": "{{baseUrl}}/behavior/records",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "behavior",
+                "records"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentId\": \"1\",\n  \"behaviorCategoryId\": \"1\",\n  \"academicYearId\": \"1\",\n  \"semesterId\": \"1\",\n  \"description\": \"تأخر عن الطابور\",\n  \"severity\": 3,\n  \"behaviorDate\": \"2026-03-30\",\n  \"teacherId\": \"47\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Behavior Record",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return one behavior record.\n\nRoles: admin, teacher, supervisor\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/behavior/records/{{behaviorRecordId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "behavior",
+                "records",
+                "{{behaviorRecordId}}"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Update Behavior Record",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Update a behavior record payload.\n\nRoles: admin, teacher, supervisor\n\nAuth: Bearer access token required\n\nBody schema: UpdateBehaviorRecordRequest",
+            "url": {
+              "raw": "{{baseUrl}}/behavior/records/{{behaviorRecordId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "behavior",
+                "records",
+                "{{behaviorRecordId}}"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"severity\": 2,\n  \"description\": \"تم تعديل الملاحظة\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Student Behavior Records",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return the student behavior timeline used beside behavior summaries. This endpoint is not paginated.\n\nRoles: admin, teacher, supervisor\n\nAuth: Bearer access token required\n\nNote: If the student exists but has no behavior records yet, the response remains 200 with zero-safe summary values and records=[].\n\nDerived data: The response combines behavior detail and summary SQL views such as vw_behavior_details and vw_student_behavior_summary.",
+            "url": {
+              "raw": "{{baseUrl}}/behavior/students/{{studentId}}/records",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "behavior",
+                "students",
+                "{{studentId}}",
+                "records"
+              ],
+              "query": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Transport",
+      "description": "Transport static data, assignments, trips, live locations, and trip student events.",
+      "item": [
+        {
+          "name": "Create Transport Assignment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Create an active student bus assignment.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: CreateTransportAssignmentRequest",
+            "url": {
+              "raw": "{{baseUrl}}/transport/assignments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transport",
+                "assignments"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentId\": \"1\",\n  \"routeId\": \"1\",\n  \"stopId\": \"1\",\n  \"startDate\": \"2026-03-30\",\n  \"endDate\": null\n}"
+            }
+          }
+        },
+        {
+          "name": "Deactivate Transport Assignment",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Deactivate an active student bus assignment.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: DeactivateTransportAssignmentRequest",
+            "url": {
+              "raw": "{{baseUrl}}/transport/assignments/{{assignmentId}}/deactivate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transport",
+                "assignments",
+                "{{assignmentId}}",
+                "deactivate"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"endDate\": \"2026-03-30\"\n}"
+            }
+          }
+        },
+        {
+          "name": "List Active Transport Assignments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: List active student bus assignments.\n\nRoles: admin\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/transport/assignments/active",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transport",
+                "assignments",
+                "active"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "List Buses",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: List buses used in transport setup.\n\nRoles: admin\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/transport/buses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transport",
+                "buses"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Create Bus",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Create a bus and optionally assign a driver. The request accepts the driver user id from /users?role=driver or the legacy driver profile id.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: CreateBusRequest\n\nNote: Frontend should send the driver user id returned by GET /users?role=driver. The backend resolves it internally to the stored driver profile id.\n\nNote: Legacy integrations may still send the driver profile id directly.",
+            "url": {
+              "raw": "{{baseUrl}}/transport/buses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transport",
+                "buses"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"plateNumber\": \"SEED-1004\",\n  \"driverId\": \"1004\",\n  \"capacity\": 45,\n  \"status\": \"active\"\n}"
+            }
+          }
+        },
+        {
+          "name": "List Route Assignments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: List recurring bus-to-route assignments for admin transport management.\n\nRoles: admin\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/transport/route-assignments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transport",
+                "route-assignments"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Create Route Assignment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Create a recurring bus-to-route assignment used by the driver daily workflow.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: CreateTransportRouteAssignmentRequest",
+            "url": {
+              "raw": "{{baseUrl}}/transport/route-assignments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transport",
+                "route-assignments"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"busId\": \"1\",\n  \"routeId\": \"1\",\n  \"startDate\": \"2026-03-30\",\n  \"endDate\": null\n}"
+            }
+          }
+        },
+        {
+          "name": "Deactivate Route Assignment",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Deactivate a recurring bus-to-route assignment. Legacy trips remain intact.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: DeactivateTransportRouteAssignmentRequest",
+            "url": {
+              "raw": "{{baseUrl}}/transport/route-assignments/{{routeAssignmentId}}/deactivate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transport",
+                "route-assignments",
+                "{{routeAssignmentId}}",
+                "deactivate"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"endDate\": \"2026-03-30\"\n}"
+            }
+          }
+        },
+        {
+          "name": "List My Route Assignments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return the active recurring route assignments owned by the authenticated driver.\n\nRoles: driver\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/transport/route-assignments/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transport",
+                "route-assignments",
+                "me"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "List Routes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: List transport routes.\n\nRoles: admin\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/transport/routes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transport",
+                "routes"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Create Route",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Create a transport route.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: CreateRouteRequest",
+            "url": {
+              "raw": "{{baseUrl}}/transport/routes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transport",
+                "routes"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"routeName\": \"SEED Route 4\",\n  \"startPoint\": \"School\",\n  \"endPoint\": \"District D\",\n  \"estimatedDurationMinutes\": 40,\n  \"isActive\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "List Route Stops",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: List route stops in stopOrder order.\n\nRoles: admin\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/transport/routes/{{routeId}}/stops",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transport",
+                "routes",
+                "{{routeId}}",
+                "stops"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Create Route Stop",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Create a stop under the selected route.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: CreateRouteStopRequest",
+            "url": {
+              "raw": "{{baseUrl}}/transport/routes/{{routeId}}/stops",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transport",
+                "routes",
+                "{{routeId}}",
+                "stops"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"stopName\": \"Stop 4\",\n  \"latitude\": 15.37,\n  \"longitude\": 44.19,\n  \"stopOrder\": 4\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Student Home Location",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Delete the current saved home location for one student.\n\nRoles: admin\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/transport/students/{{studentId}}/home-location",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transport",
+                "students",
+                "{{studentId}}",
+                "home-location"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Get Student Home Location",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return the current saved home location reference for one student. In this round the endpoint is admin-only.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nNote: If the student exists but no home location has been saved yet, the response remains 200 with homeLocation=null.",
+            "url": {
+              "raw": "{{baseUrl}}/transport/students/{{studentId}}/home-location",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transport",
+                "students",
+                "{{studentId}}",
+                "home-location"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Save Student Home Location",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Create or update the current student home location reference. v1 uses admin as the submitting source.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: SaveStudentHomeLocationRequest\n\nNote: Admin may save pending, approved, or rejected locations. Only approved locations appear in the driver roster.",
+            "url": {
+              "raw": "{{baseUrl}}/transport/students/{{studentId}}/home-location",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transport",
+                "students",
+                "{{studentId}}",
+                "home-location"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"addressLabel\": \"Student Home 1\",\n  \"addressText\": \"Nearby the local market\",\n  \"latitude\": 15.3701,\n  \"longitude\": 44.1921,\n  \"status\": \"approved\",\n  \"notes\": null\n}"
+            }
+          }
+        },
+        {
+          "name": "List Trips",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: List trips with pagination. Drivers only see trips within their scope.\n\nRoles: admin, driver\n\nAuth: Bearer access token required\n\nQuery params: page, limit, sortBy, sortOrder, busId, routeId, tripType, tripStatus, tripDate, dateFrom, dateTo",
+            "url": {
+              "raw": "{{baseUrl}}/transport/trips",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transport",
+                "trips"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Pagination page number."
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Pagination page size."
+                },
+                {
+                  "key": "sortBy",
+                  "value": "tripDate",
+                  "description": "Sort field whitelist."
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "description": "Sort direction."
+                },
+                {
+                  "key": "busId",
+                  "value": "1",
+                  "description": "Filter by bus id."
+                },
+                {
+                  "key": "routeId",
+                  "value": "1",
+                  "description": "Filter by route id."
+                },
+                {
+                  "key": "tripType",
+                  "value": "pickup",
+                  "description": "Filter by trip type."
+                },
+                {
+                  "key": "tripStatus",
+                  "value": "started",
+                  "description": "Filter by trip status."
+                },
+                {
+                  "key": "tripDate",
+                  "value": "2026-03-30",
+                  "description": "Filter by exact trip date."
+                },
+                {
+                  "key": "dateFrom",
+                  "value": "2026-03-30",
+                  "description": "Filter from trip date."
+                },
+                {
+                  "key": "dateTo",
+                  "value": "2026-03-30",
+                  "description": "Filter to trip date."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Trip",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Create a trip for a bus and route. Drivers and admins can create trips.\n\nRoles: admin, driver\n\nAuth: Bearer access token required\n\nBody schema: CreateTripRequest",
+            "url": {
+              "raw": "{{baseUrl}}/transport/trips",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transport",
+                "trips"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"busId\": \"1\",\n  \"routeId\": \"1\",\n  \"tripDate\": \"2026-03-30\",\n  \"tripType\": \"pickup\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Trip",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return one trip detail including latest location, route stops, and event summary.\n\nRoles: admin, driver\n\nAuth: Bearer access token required\n\nDerived data: Trip detail aggregates transport views such as vw_trip_details, vw_route_stops, and vw_latest_trip_location.",
+            "url": {
+              "raw": "{{baseUrl}}/transport/trips/{{tripId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transport",
+                "trips",
+                "{{tripId}}"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "End Trip",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Mark a trip as ended.\n\nRoles: admin, driver\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/transport/trips/{{tripId}}/end",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transport",
+                "trips",
+                "{{tripId}}",
+                "end"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "List Trip Events",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: List student events recorded for a trip.\n\nRoles: admin, driver\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/transport/trips/{{tripId}}/events",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transport",
+                "trips",
+                "{{tripId}}",
+                "events"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Create Trip Student Event",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Create one trip student event. stopId is required for boarded and dropped_off events, and must be omitted for absent.\n\nRoles: admin, driver\n\nAuth: Bearer access token required\n\nBody schema: CreateTripStudentEventRequest\n\nNote: Trip student event validation is trip-date aware: the student must have a transport assignment covering the trip date and route.\n\nSide effects: Dropped-off events trigger parent notifications through the internal automation service.",
+            "url": {
+              "raw": "{{baseUrl}}/transport/trips/{{tripId}}/events",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transport",
+                "trips",
+                "{{tripId}}",
+                "events"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentId\": \"1\",\n  \"eventType\": \"dropped_off\",\n  \"stopId\": \"1\",\n  \"notes\": \"تم النزول بنجاح\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Record Trip Location",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Record one location point for a started trip.\n\nRoles: admin, driver\n\nAuth: Bearer access token required\n\nBody schema: RecordTripLocationRequest",
+            "url": {
+              "raw": "{{baseUrl}}/transport/trips/{{tripId}}/locations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transport",
+                "trips",
+                "{{tripId}}",
+                "locations"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"latitude\": 15.3694,\n  \"longitude\": 44.191\n}"
+            }
+          }
+        },
+        {
+          "name": "Start Trip",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Mark a scheduled trip as started.\n\nRoles: admin, driver\n\nAuth: Bearer access token required\n\nSide effects: Trip start triggers parent notifications per assigned student through the internal automation service.",
+            "url": {
+              "raw": "{{baseUrl}}/transport/trips/{{tripId}}/start",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transport",
+                "trips",
+                "{{tripId}}",
+                "start"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Get Trip Student Roster",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return the full student roster for one trip, including assigned stop coordinates, the latest event state inside the same trip, and approved home location when available.\n\nRoles: admin, driver\n\nAuth: Bearer access token required\n\nQuery params: search, stopId\n\nNote: The roster returns all students assigned to the trip route for the trip date, even when no trip event has been recorded yet.\n\nNote: If the trip exists but has no eligible students, the response remains 200 with students=[].\n\nNote: Only approved homeLocation data is exposed to the driver-facing roster.\n\nDerived data: Roster rows are derived from trip-date transport assignments, route stop coordinates, approved student_transport_home_locations, and the latest trip_student_events row per student inside the same trip.",
+            "url": {
+              "raw": "{{baseUrl}}/transport/trips/{{tripId}}/students",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transport",
+                "trips",
+                "{{tripId}}",
+                "students"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "Student One",
+                  "description": "Filter roster rows by student full name or academic number."
+                },
+                {
+                  "key": "stopId",
+                  "value": "1",
+                  "description": "Filter roster rows by assigned stop id."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Ensure Daily Trip",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Create or reuse the operational trip for one route assignment, trip date, and trip type without creating duplicates.\n\nRoles: admin, driver\n\nAuth: Bearer access token required\n\nBody schema: EnsureDailyTripRequest\n\nNote: If a matching trip already exists for the same bus, route, tripDate, and tripType, the response remains 200 with created=false.\n\nNote: This is the preferred driver-facing daily trip flow. POST /transport/trips remains a legacy fallback.\n\nDerived data: The endpoint reuses the natural uniqueness of bus + route + tripDate + tripType.",
+            "url": {
+              "raw": "{{baseUrl}}/transport/trips/ensure-daily",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transport",
+                "trips",
+                "ensure-daily"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"routeAssignmentId\": \"1\",\n  \"tripDate\": \"2026-03-30\",\n  \"tripType\": \"pickup\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Communication",
+      "description": "Direct messages, announcements, and notification center endpoints.",
+      "item": [
+        {
+          "name": "List All Announcements",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: List all announcements, including expired ones, for admin management.\n\nRoles: admin\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/communication/announcements",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "communication",
+                "announcements"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Create Announcement",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Create an admin announcement targeted to all users, one role, or multiple roles. targetRole remains legacy; targetRoles[] is the new multi-role contract.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: CreateAnnouncementRequest\n\nNote: Announcements support roles/all only. Person-targeted announcements are not supported.\n\nNote: Do not send targetRole and targetRoles together.\n\nNote: If neither targetRole nor targetRoles is provided, the announcement targets all active roles.",
+            "url": {
+              "raw": "{{baseUrl}}/communication/announcements",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "communication",
+                "announcements"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"[Seed] New notice\",\n  \"content\": \"إعلان موجّه للمعلمين والمشرفين\",\n  \"targetRoles\": [\n    \"teacher\",\n    \"supervisor\"\n  ],\n  \"expiresAt\": \"2026-04-01T00:00:00.000Z\"\n}"
+            }
+          }
+        },
+        {
+          "name": "List Active Announcements",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return the active announcement feed visible to the authenticated role.\n\nRoles: admin, parent, teacher, supervisor, driver\n\nAuth: Bearer access token required\n\nDerived data: The feed uses SQL views such as vw_active_announcements and filters by targetRoles[] when present; an empty targetRoles array means all roles.",
+            "url": {
+              "raw": "{{baseUrl}}/communication/announcements/active",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "communication",
+                "announcements",
+                "active"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Send Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Send a direct message to another active user.\n\nRoles: admin, parent, teacher, supervisor, driver\n\nAuth: Bearer access token required\n\nBody schema: SendMessageRequest",
+            "url": {
+              "raw": "{{baseUrl}}/communication/messages",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "communication",
+                "messages"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"receiverUserId\": \"20\",\n  \"messageBody\": \"رسالة مباشرة تجريبية\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Mark Message Read",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Mark one received message as read.\n\nRoles: admin, parent, teacher, supervisor, driver\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/communication/messages/{{messageId}}/read",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "communication",
+                "messages",
+                "{{messageId}}",
+                "read"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "[NEW] Send Bulk Messages",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Create admin-only multi-target direct messages as individual one-to-one copies. The endpoint is all-or-nothing and uses the same audience rules as /communication/recipients.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: SendBulkMessageRequest\n\nNote: [NEW] Direct multi-target delivery creates individual copies inside messages; it does not create a group thread.\n\nNote: [NEW] At least one of receiverUserIds[] or targetRoles[] is required.\n\nNote: [NEW] Explicit self-targeting is rejected.\n\nNote: [NEW] If resolved audience is empty or explicit user ids are outside the available-recipient surface, the request fails with 400.\n\nDerived data: Audience resolution reuses the same active-user and self-exclusion policy exposed by GET /communication/recipients.",
+            "url": {
+              "raw": "{{baseUrl}}/communication/messages/bulk",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "communication",
+                "messages",
+                "bulk"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"receiverUserIds\": [\n    \"20\"\n  ],\n  \"targetRoles\": [\n    \"teacher\",\n    \"supervisor\"\n  ],\n  \"messageBody\": \"رسالة جماعية منسوخة كرسائل فردية\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Conversation",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: List a direct conversation thread with another user. The default sort is ascending by sentAt.\n\nRoles: admin, parent, teacher, supervisor, driver\n\nAuth: Bearer access token required\n\nQuery params: page, limit, sortBy, sortOrder",
+            "url": {
+              "raw": "{{baseUrl}}/communication/messages/conversations/{{otherUserId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "communication",
+                "messages",
+                "conversations",
+                "{{otherUserId}}"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Pagination page number."
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Pagination page size."
+                },
+                {
+                  "key": "sortBy",
+                  "value": "sentAt",
+                  "description": "Sort field whitelist."
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "asc",
+                  "description": "Sort direction."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Inbox",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: List inbox messages for the authenticated user with unreadCount metadata.\n\nRoles: admin, parent, teacher, supervisor, driver\n\nAuth: Bearer access token required\n\nQuery params: page, limit, sortBy, sortOrder, isRead",
+            "url": {
+              "raw": "{{baseUrl}}/communication/messages/inbox",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "communication",
+                "messages",
+                "inbox"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Pagination page number."
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Pagination page size."
+                },
+                {
+                  "key": "sortBy",
+                  "value": "sentAt",
+                  "description": "Sort field whitelist."
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "description": "Sort direction."
+                },
+                {
+                  "key": "isRead",
+                  "value": "true",
+                  "description": "Filter by read state."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Sent Messages",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: List sent messages for the authenticated user.\n\nRoles: admin, parent, teacher, supervisor, driver\n\nAuth: Bearer access token required\n\nQuery params: page, limit, sortBy, sortOrder, receiverUserId",
+            "url": {
+              "raw": "{{baseUrl}}/communication/messages/sent",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "communication",
+                "messages",
+                "sent"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Pagination page number."
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Pagination page size."
+                },
+                {
+                  "key": "sortBy",
+                  "value": "sentAt",
+                  "description": "Sort field whitelist."
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "description": "Sort direction."
+                },
+                {
+                  "key": "receiverUserId",
+                  "value": "1",
+                  "description": "Filter by receiver user id."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Notification",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Create a manual notification for one user. notificationType is free-form and can coexist with automation-generated values.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: CreateNotificationRequest",
+            "url": {
+              "raw": "{{baseUrl}}/communication/notifications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "communication",
+                "notifications"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"20\",\n  \"title\": \"إشعار يدوي\",\n  \"message\": \"رسالة إشعار يدوية\",\n  \"notificationType\": \"manual\",\n  \"referenceType\": null,\n  \"referenceId\": null\n}"
+            }
+          }
+        },
+        {
+          "name": "Mark Notification Read",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Mark one notification as read.\n\nRoles: admin, parent, teacher, supervisor, driver\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/communication/notifications/{{notificationId}}/read",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "communication",
+                "notifications",
+                "{{notificationId}}",
+                "read"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "[NEW] Create Bulk Notifications",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Create admin-only multi-target notifications in one all-or-nothing transaction with an authoritative delivery summary.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nBody schema: CreateBulkNotificationRequest\n\nNote: [NEW] At least one of userIds[] or targetRoles[] is required.\n\nNote: [NEW] Audience resolution reuses the same available-recipient rules as GET /communication/recipients.\n\nNote: [NEW] The response returns delivery summary metadata rather than the full notification list.",
+            "url": {
+              "raw": "{{baseUrl}}/communication/notifications/bulk",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "communication",
+                "notifications",
+                "bulk"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userIds\": [\n    \"20\"\n  ],\n  \"targetRoles\": [\n    \"parent\"\n  ],\n  \"title\": \"إشعار جماعي\",\n  \"message\": \"هذا الإشعار يصل كملاحظات فردية\",\n  \"notificationType\": \"manual\",\n  \"referenceType\": null,\n  \"referenceId\": null\n}"
+            }
+          }
+        },
+        {
+          "name": "List My Notifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: List notifications for the authenticated user with unreadCount metadata.\n\nRoles: admin, parent, teacher, supervisor, driver\n\nAuth: Bearer access token required\n\nQuery params: page, limit, sortBy, sortOrder, isRead, notificationType\n\nDerived data: Notification lists rely on views such as vw_notification_details and vw_user_notification_summary.",
+            "url": {
+              "raw": "{{baseUrl}}/communication/notifications/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "communication",
+                "notifications",
+                "me"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Pagination page number."
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Pagination page size."
+                },
+                {
+                  "key": "sortBy",
+                  "value": "createdAt",
+                  "description": "Sort field whitelist."
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "description": "Sort direction."
+                },
+                {
+                  "key": "isRead",
+                  "value": "true",
+                  "description": "Filter by read state."
+                },
+                {
+                  "key": "notificationType",
+                  "value": "attendance_absent",
+                  "description": "Filter by notification type."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Available Recipients",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return the active users that the authenticated caller can currently message. v1 mirrors the current messaging policy: any active user except self.\n\nRoles: admin, parent, teacher, supervisor, driver\n\nAuth: Bearer access token required\n\nQuery params: page, limit, search, role\n\nNote: The response is scope-limited to active users and excludes the authenticated user.\n\nNote: Empty result sets return 200 with items=[].",
+            "url": {
+              "raw": "{{baseUrl}}/communication/recipients",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "communication",
+                "recipients"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Pagination page number."
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Pagination page size."
+                },
+                {
+                  "key": "search",
+                  "value": "Supervisor",
+                  "description": "Filter recipients by full name, email, or phone."
+                },
+                {
+                  "key": "role",
+                  "value": "supervisor",
+                  "description": "Filter recipients by role."
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Homework",
+      "description": "Homework management, submission rosters, and student homework surfaces.",
+      "item": [
+        {
+          "name": "List Homework",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: List homework for the active academic context with pagination and academic filters.\n\nRoles: admin, teacher\n\nAuth: Bearer access token required\n\nQuery params: page, limit, sortBy, sortOrder, classId, subjectId, teacherId, academicYearId, semesterId, assignedDate, dueDate, dateFrom, dateTo\n\nNote: This operational list is scoped to the active academic year and active semester.\n\nNote: teacherId filter accepts the teacher user id returned by GET /users?role=teacher or the legacy teacher profile id. Prefer the user id in admin frontend flows.\n\nDerived data: Homework lists are enriched by SQL views such as vw_homework_details.",
+            "url": {
+              "raw": "{{baseUrl}}/homework",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "homework"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Pagination page number."
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Pagination page size."
+                },
+                {
+                  "key": "sortBy",
+                  "value": "dueDate",
+                  "description": "Sort field whitelist."
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "description": "Sort direction."
+                },
+                {
+                  "key": "classId",
+                  "value": "1",
+                  "description": "Filter by class id."
+                },
+                {
+                  "key": "subjectId",
+                  "value": "1",
+                  "description": "Filter by subject id."
+                },
+                {
+                  "key": "teacherId",
+                  "value": "1",
+                  "description": "Filter by teacher identifier. Accepts the teacher user id from /users?role=teacher or the legacy teacher profile id."
+                },
+                {
+                  "key": "academicYearId",
+                  "value": "1",
+                  "description": "Filter by academic year id."
+                },
+                {
+                  "key": "semesterId",
+                  "value": "1",
+                  "description": "Filter by semester id."
+                },
+                {
+                  "key": "assignedDate",
+                  "value": "2026-03-30",
+                  "description": "Filter by exact assigned date."
+                },
+                {
+                  "key": "dueDate",
+                  "value": "2026-03-30",
+                  "description": "Filter by exact due date."
+                },
+                {
+                  "key": "dateFrom",
+                  "value": "2026-03-30",
+                  "description": "Filter from date range."
+                },
+                {
+                  "key": "dateTo",
+                  "value": "2026-03-30",
+                  "description": "Filter to date range."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Homework",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Create homework inside the active academic context. Teachers may omit teacherId and rely on the authenticated teacher profile. Admin teacherId accepts the teacher user id from /users?role=teacher or the legacy teacher profile id.\n\nRoles: admin, teacher\n\nAuth: Bearer access token required\n\nBody schema: CreateHomeworkRequest\n\nNote: academicYearId and semesterId may be omitted; the backend resolves the active academic context automatically.\n\nNote: If academicYearId or semesterId is sent, it must match the active context.\n\nNote: The selected subjectId must have an active subject offering for the resolved semester.\n\nNote: Admin frontend flows should send teacherId as the teacher user id returned by GET /users?role=teacher.",
+            "url": {
+              "raw": "{{baseUrl}}/homework",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "homework"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"teacherId\": \"47\",\n  \"classId\": \"1\",\n  \"subjectId\": \"1\",\n  \"academicYearId\": \"1\",\n  \"semesterId\": \"1\",\n  \"title\": \"واجب الرياضيات 2\",\n  \"description\": \"حل الصفحات 12-14\",\n  \"assignedDate\": \"2026-03-30\",\n  \"dueDate\": \"2026-03-28\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Homework",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return one homework detail including roster-level submission summary.\n\nRoles: admin, teacher\n\nAuth: Bearer access token required\n\nDerived data: Homework detail is enriched through SQL views such as vw_homework_details and vw_homework_submission_details.",
+            "url": {
+              "raw": "{{baseUrl}}/homework/{{homeworkId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "homework",
+                "{{homeworkId}}"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Save Homework Submissions",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Purpose: Create or update the homework submission roster.\n\nRoles: admin, teacher\n\nAuth: Bearer access token required\n\nBody schema: SaveHomeworkSubmissionsRequest",
+            "url": {
+              "raw": "{{baseUrl}}/homework/{{homeworkId}}/submissions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "homework",
+                "{{homeworkId}}",
+                "submissions"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"records\": [\n    {\n      \"studentId\": \"1\",\n      \"status\": \"submitted\",\n      \"submittedAt\": \"2026-03-30\",\n      \"notes\": \"تم التسليم\"\n    },\n    {\n      \"studentId\": \"2\",\n      \"status\": \"late\",\n      \"submittedAt\": \"2026-03-30\",\n      \"notes\": \"تسليم متأخر\"\n    }\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Student Homework",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return homework assigned to one student. Parents are restricted to their linked children.\n\nRoles: admin, teacher, parent\n\nAuth: Bearer access token required\n\nNote: If the student exists but has no homework yet, the response remains 200 with items=[].\n\nDerived data: Student homework uses view-backed projections such as vw_homework_details and vw_homework_submission_details.",
+            "url": {
+              "raw": "{{baseUrl}}/homework/students/{{studentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "homework",
+                "students",
+                "{{studentId}}"
+              ],
+              "query": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reporting",
+      "description": "Role dashboards, student-scoped reports, transport summaries, and parent live-status endpoints.",
+      "item": [
+        {
+          "name": "Get Admin Preview Parent Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return the canonical parent dashboard surface for admin monitoring, starting from the selected parent user account.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nNote: Admin-only, read-only preview surface.\n\nNote: Path identifiers are users.id values, not parent profile ids.\n\nNote: This is the preferred backend surface for parent-first monitoring and role parity previews.",
+            "url": {
+              "raw": "{{baseUrl}}/reporting/admin-preview/parents/{{parentUserId}}/dashboard",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reporting",
+                "admin-preview",
+                "parents",
+                "{{parentUserId}}",
+                "dashboard"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Get Admin Preview Parent Child Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return the canonical child profile payload under one selected parent user for admin monitoring.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nNote: Admin-only, read-only preview surface.\n\nNote: Requires the selected child to be linked to the selected parent or returns 404 Student not linked to parent.\n\nNote: Path identifiers are users.id for the parent and students.id for the child.",
+            "url": {
+              "raw": "{{baseUrl}}/reporting/admin-preview/parents/{{parentUserId}}/students/{{studentId}}/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reporting",
+                "admin-preview",
+                "parents",
+                "{{parentUserId}}",
+                "students",
+                "{{studentId}}",
+                "profile"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Get Admin Preview Parent Child Assessment Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return the canonical child assessment summary under one selected parent user for admin monitoring.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nNote: Admin-only, read-only preview surface.\n\nNote: Requires parent-child linkage or returns 404 Student not linked to parent.\n\nNote: Use assessmentSummary.subjects[] rather than items[].",
+            "url": {
+              "raw": "{{baseUrl}}/reporting/admin-preview/parents/{{parentUserId}}/students/{{studentId}}/reports/assessment-summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reporting",
+                "admin-preview",
+                "parents",
+                "{{parentUserId}}",
+                "students",
+                "{{studentId}}",
+                "reports",
+                "assessment-summary"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Get Admin Preview Parent Child Attendance Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return the canonical child attendance summary under one selected parent user for admin monitoring.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nNote: Admin-only, read-only preview surface.\n\nNote: Requires parent-child linkage or returns 404 Student not linked to parent.\n\nNote: No data yet returns 200 with zero-safe totals.",
+            "url": {
+              "raw": "{{baseUrl}}/reporting/admin-preview/parents/{{parentUserId}}/students/{{studentId}}/reports/attendance-summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reporting",
+                "admin-preview",
+                "parents",
+                "{{parentUserId}}",
+                "students",
+                "{{studentId}}",
+                "reports",
+                "attendance-summary"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Get Admin Preview Parent Child Behavior Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return the canonical child behavior summary under one selected parent user for admin monitoring.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nNote: Admin-only, read-only preview surface.\n\nNote: Requires parent-child linkage or returns 404 Student not linked to parent.\n\nNote: Use /behavior/students/:studentId/records for the detailed timeline outside this summary view.",
+            "url": {
+              "raw": "{{baseUrl}}/reporting/admin-preview/parents/{{parentUserId}}/students/{{studentId}}/reports/behavior-summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reporting",
+                "admin-preview",
+                "parents",
+                "{{parentUserId}}",
+                "students",
+                "{{studentId}}",
+                "reports",
+                "behavior-summary"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Get Admin Preview Parent Child Transport Live Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return the canonical parent transport live-status surface for one linked child under a selected parent user.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nNote: Admin-only, read-only preview surface.\n\nNote: Requires parent-child linkage or returns 404 Student not linked to parent.\n\nNote: Wave 1 is polling-based and does not include Firebase or ETA.\n\nDerived data: This response is view-backed and combines active assignment, active trip live status, latest location, and recent event projections.",
+            "url": {
+              "raw": "{{baseUrl}}/reporting/admin-preview/parents/{{parentUserId}}/students/{{studentId}}/transport/live-status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reporting",
+                "admin-preview",
+                "parents",
+                "{{parentUserId}}",
+                "students",
+                "{{studentId}}",
+                "transport",
+                "live-status"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Get Admin Preview Supervisor Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return the canonical supervisor dashboard surface for admin monitoring, starting from the selected supervisor user account.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nNote: Admin-only, read-only preview surface.\n\nNote: Path identifier is the supervisor users.id from /users?role=supervisor.\n\nNote: Use this instead of reconstructing supervisor dashboard parity from multiple admin endpoints.",
+            "url": {
+              "raw": "{{baseUrl}}/reporting/admin-preview/supervisors/{{supervisorUserId}}/dashboard",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reporting",
+                "admin-preview",
+                "supervisors",
+                "{{supervisorUserId}}",
+                "dashboard"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Get Admin Preview Teacher Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return the canonical teacher dashboard surface for admin monitoring, starting from the selected teacher user account.\n\nRoles: admin\n\nAuth: Bearer access token required\n\nNote: Admin-only, read-only preview surface.\n\nNote: Path identifier is the teacher users.id from /users?role=teacher.\n\nNote: Use this instead of reconstructing teacher dashboard parity from multiple admin endpoints.",
+            "url": {
+              "raw": "{{baseUrl}}/reporting/admin-preview/teachers/{{teacherUserId}}/dashboard",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reporting",
+                "admin-preview",
+                "teachers",
+                "{{teacherUserId}}",
+                "dashboard"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Get Admin Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return the admin dashboard surface.\n\nRoles: admin\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/reporting/dashboards/admin/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reporting",
+                "dashboards",
+                "admin",
+                "me"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Get Parent Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return the parent dashboard summary surface.\n\nRoles: parent\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/reporting/dashboards/parent/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reporting",
+                "dashboards",
+                "parent",
+                "me"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Get Parent Child Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return the child profile payload for the authenticated parent.\n\nRoles: parent\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/reporting/dashboards/parent/me/students/{{studentId}}/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reporting",
+                "dashboards",
+                "parent",
+                "me",
+                "students",
+                "{{studentId}}",
+                "profile"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Get Parent Child Assessment Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return the child assessment summary for the authenticated parent.\n\nRoles: parent\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/reporting/dashboards/parent/me/students/{{studentId}}/reports/assessment-summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reporting",
+                "dashboards",
+                "parent",
+                "me",
+                "students",
+                "{{studentId}}",
+                "reports",
+                "assessment-summary"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Get Parent Child Attendance Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return the child attendance summary for the authenticated parent.\n\nRoles: parent\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/reporting/dashboards/parent/me/students/{{studentId}}/reports/attendance-summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reporting",
+                "dashboards",
+                "parent",
+                "me",
+                "students",
+                "{{studentId}}",
+                "reports",
+                "attendance-summary"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Get Parent Child Behavior Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return the child behavior summary for the authenticated parent.\n\nRoles: parent\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/reporting/dashboards/parent/me/students/{{studentId}}/reports/behavior-summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reporting",
+                "dashboards",
+                "parent",
+                "me",
+                "students",
+                "{{studentId}}",
+                "reports",
+                "behavior-summary"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Get Supervisor Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return the supervisor dashboard surface.\n\nRoles: supervisor\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/reporting/dashboards/supervisor/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reporting",
+                "dashboards",
+                "supervisor",
+                "me"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Get Teacher Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return the teacher dashboard surface.\n\nRoles: teacher\n\nAuth: Bearer access token required",
+            "url": {
+              "raw": "{{baseUrl}}/reporting/dashboards/teacher/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reporting",
+                "dashboards",
+                "teacher",
+                "me"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Get Student Profile Report",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return the full student profile payload used in admin and staff reporting screens.\n\nRoles: admin, teacher, supervisor\n\nAuth: Bearer access token required\n\nNote: If the student exists but has no related attendance, assessment, or behavior rows yet, the response stays 200 with zero-safe summaries.\n\nDerived data: This payload combines view-backed projections such as vw_student_profiles, vw_student_attendance_summary, vw_student_assessment_summary, and vw_student_behavior_summary.",
+            "url": {
+              "raw": "{{baseUrl}}/reporting/students/{{studentId}}/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reporting",
+                "students",
+                "{{studentId}}",
+                "profile"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Get Student Assessment Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return the student assessment summary. Use assessmentSummary.subjects[] rather than items[].\n\nRoles: admin, teacher, supervisor\n\nAuth: Bearer access token required\n\nNote: No data yet returns 200 with zero-safe overall metrics and an empty subjects array.\n\nDerived data: Derived from summary views such as vw_student_assessment_summary.",
+            "url": {
+              "raw": "{{baseUrl}}/reporting/students/{{studentId}}/reports/assessment-summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reporting",
+                "students",
+                "{{studentId}}",
+                "reports",
+                "assessment-summary"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Get Student Attendance Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return the student attendance summary used in charts and cards.\n\nRoles: admin, teacher, supervisor\n\nAuth: Bearer access token required\n\nNote: No data yet returns 200 with zero-safe totals, not 404.\n\nDerived data: Derived from summary views such as vw_student_attendance_summary.",
+            "url": {
+              "raw": "{{baseUrl}}/reporting/students/{{studentId}}/reports/attendance-summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reporting",
+                "students",
+                "{{studentId}}",
+                "reports",
+                "attendance-summary"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Get Student Behavior Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return the student behavior summary. Use /behavior/students/:studentId/records for the detailed timeline.\n\nRoles: admin, teacher, supervisor\n\nAuth: Bearer access token required\n\nNote: No data yet returns 200 with zero-safe totals, not 404.\n\nDerived data: Derived from summary views such as vw_student_behavior_summary.",
+            "url": {
+              "raw": "{{baseUrl}}/reporting/students/{{studentId}}/reports/behavior-summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reporting",
+                "students",
+                "{{studentId}}",
+                "reports",
+                "behavior-summary"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Get Parent Child Transport Live Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return the transport live status for one linked child. Wave 1 is polling-based and does not include Firebase or ETA.\n\nRoles: parent\n\nAuth: Bearer access token required\n\nDerived data: This response is view-backed and combines active assignment, active trip live status, latest location, and recent event projections.",
+            "url": {
+              "raw": "{{baseUrl}}/reporting/transport/parent/me/students/{{studentId}}/live-status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reporting",
+                "transport",
+                "parent",
+                "me",
+                "students",
+                "{{studentId}}",
+                "live-status"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Get Transport Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "description": "Purpose: Return the transport summary surface shared by admin and driver.\n\nRoles: admin, driver\n\nAuth: Bearer access token required\n\nDerived data: Transport summaries rely on views such as vw_trip_details, vw_latest_trip_location, vw_active_trip_live_status, and vw_trip_student_event_details.",
+            "url": {
+              "raw": "{{baseUrl}}/reporting/transport/summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reporting",
+                "transport",
+                "summary"
+              ],
+              "query": []
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1933 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Ishraf Platform Auth API",
+    "version": "1.0.0",
+    "description": "Auth-only subset synchronized with the live runtime."
+  },
+  "servers": [
+    {
+      "url": "https://ishraf-platform-backend-staging.onrender.com/api/v1",
+      "description": "Hosted staging on Render"
+    },
+    {
+      "url": "http://localhost:4000/api/v1",
+      "description": "Local development"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "NumericStringId": {
+        "type": "string",
+        "pattern": "^[0-9]+$",
+        "example": "1"
+      },
+      "DateString": {
+        "type": "string",
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+        "example": "2026-03-30"
+      },
+      "DateTimeString": {
+        "type": "string",
+        "format": "date-time",
+        "example": "2026-03-30T12:00:00.000Z"
+      },
+      "GenericObject": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "Pagination": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 1
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "example": 20
+          },
+          "totalItems": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 1
+          },
+          "totalPages": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 1
+          }
+        },
+        "required": [
+          "page",
+          "limit",
+          "totalItems",
+          "totalPages"
+        ]
+      },
+      "ErrorDetail": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "code": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ]
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "const": false
+          },
+          "message": {
+            "type": "string"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ErrorDetail"
+            }
+          }
+        },
+        "required": [
+          "success",
+          "message",
+          "errors"
+        ]
+      },
+      "LoginRequest": {
+        "type": "object",
+        "properties": {
+          "identifier": {
+            "type": "string",
+            "minLength": 1
+          },
+          "password": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "identifier",
+          "password"
+        ],
+        "additionalProperties": false,
+        "example": {
+          "identifier": "{{loginIdentifier}}",
+          "password": "{{loginPassword}}"
+        }
+      },
+      "ForgotPasswordRequest": {
+        "type": "object",
+        "properties": {
+          "identifier": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "identifier"
+        ],
+        "additionalProperties": false,
+        "example": {
+          "identifier": "{{loginIdentifier}}"
+        }
+      },
+      "ResetPasswordRequest": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "minLength": 1
+          },
+          "newPassword": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 72
+          }
+        },
+        "required": [
+          "token",
+          "newPassword"
+        ],
+        "additionalProperties": false,
+        "example": {
+          "token": "{{resetToken}}",
+          "newPassword": "{{newPassword}}"
+        }
+      },
+      "RefreshTokenRequest": {
+        "type": "object",
+        "properties": {
+          "refreshToken": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "refreshToken"
+        ],
+        "additionalProperties": false,
+        "example": {
+          "refreshToken": "{{refreshToken}}"
+        }
+      },
+      "LogoutRequest": {
+        "type": "object",
+        "properties": {
+          "refreshToken": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "refreshToken"
+        ],
+        "additionalProperties": false,
+        "example": {
+          "refreshToken": "{{refreshToken}}"
+        }
+      },
+      "ChangePasswordRequest": {
+        "type": "object",
+        "properties": {
+          "currentPassword": {
+            "type": "string",
+            "minLength": 1
+          },
+          "newPassword": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 72
+          }
+        },
+        "required": [
+          "currentPassword",
+          "newPassword"
+        ],
+        "additionalProperties": false,
+        "example": {
+          "currentPassword": "{{loginPassword}}",
+          "newPassword": "{{newPassword}}"
+        }
+      },
+      "CreateUserRequest": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "admin",
+              "parent",
+              "teacher",
+              "supervisor",
+              "driver"
+            ]
+          },
+          "fullName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 150
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "phone": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 72
+          },
+          "profile": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "role",
+          "fullName",
+          "password"
+        ],
+        "additionalProperties": false,
+        "description": "Discriminated by role. profile is role-specific: parent(address, relationType), teacher(specialization, qualification, hireDate), supervisor(department), driver(licenseNumber, driverStatus), admin(null or omitted).",
+        "example": {
+          "role": "parent",
+          "fullName": "ولي أمر جديد",
+          "email": "new-parent@example.com",
+          "phone": "777111111",
+          "password": "StrongPassword123!",
+          "profile": {
+            "address": "صنعاء",
+            "relationType": "father"
+          }
+        }
+      },
+      "UpdateUserRequest": {
+        "type": "object",
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 150
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "phone": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "profile": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": false,
+        "example": {
+          "fullName": "اسم محدث",
+          "phone": "777111112"
+        }
+      },
+      "UpdateUserStatusRequest": {
+        "type": "object",
+        "properties": {
+          "isActive": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "isActive"
+        ],
+        "additionalProperties": false,
+        "example": {
+          "isActive": false
+        }
+      },
+      "CreateAcademicYearRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "startDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "example": "2026-03-30"
+          },
+          "endDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "example": "2026-03-30"
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name",
+          "startDate",
+          "endDate"
+        ],
+        "additionalProperties": false,
+        "example": {
+          "name": "2026-2027",
+          "startDate": "2026-09-01",
+          "endDate": "2027-06-30",
+          "isActive": false
+        }
+      },
+      "UpdateAcademicYearRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "startDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "example": "2026-03-30"
+          },
+          "endDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "example": "2026-03-30"
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false,
+        "example": {
+          "isActive": true
+        }
+      },
+      "CreateSemesterRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "startDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "example": "2026-03-30"
+          },
+          "endDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "example": "2026-03-30"
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name",
+          "startDate",
+          "endDate"
+        ],
+        "additionalProperties": false,
+        "example": {
+          "name": "الفصل الثاني",
+          "startDate": "2026-01-20",
+          "endDate": "2026-06-20",
+          "isActive": false
+        }
+      },
+      "UpdateSemesterRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "startDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "example": "2026-03-30"
+          },
+          "endDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "example": "2026-03-30"
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false,
+        "example": {
+          "isActive": true
+        }
+      },
+      "CreateGradeLevelRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "levelOrder": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "name",
+          "levelOrder"
+        ],
+        "additionalProperties": false,
+        "example": {
+          "name": "الصف الرابع",
+          "levelOrder": 4
+        }
+      },
+      "CreateClassRequest": {
+        "type": "object",
+        "properties": {
+          "gradeLevelId": {
+            "type": "string",
+            "pattern": "^[0-9]+$",
+            "example": "1"
+          },
+          "academicYearId": {
+            "type": "string",
+            "pattern": "^[0-9]+$",
+            "example": "1"
+          },
+          "className": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "section": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "capacity": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "gradeLevelId",
+          "academicYearId",
+          "className",
+          "section"
+        ],
+        "additionalProperties": false,
+        "example": {
+          "gradeLevelId": "1",
+          "academicYearId": "1",
+          "className": "الصف الأول",
+          "section": "B",
+          "capacity": 30,
+          "isActive": true
+        }
+      },
+      "UpdateClassRequest": {
+        "type": "object",
+        "properties": {
+          "className": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "section": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "capacity": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false,
+        "example": {
+          "section": "C",
+          "capacity": 30,
+          "isActive": false
+        }
+      },
+      "CreateSubjectRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "gradeLevelId": {
+            "type": "string",
+            "pattern": "^[0-9]+$",
+            "example": "1"
+          },
+          "code": {
+            "type": "string",
+            "maxLength": 50
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name",
+          "gradeLevelId"
+        ],
+        "additionalProperties": false,
+        "example": {
+          "name": "العلوم",
+          "gradeLevelId": "1",
+          "code": "SCI-1",
+          "isActive": true
+        }
+      },
+      "UpdateSubjectRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 50
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false,
+        "example": {
+          "name": "العلوم المتقدمة",
+          "code": null,
+          "isActive": false
+        }
+      },
+      "CreateSubjectOfferingRequest": {
+        "type": "object",
+        "properties": {
+          "subjectId": {
+            "type": "string",
+            "pattern": "^[0-9]+$",
+            "example": "1"
+          },
+          "semesterId": {
+            "type": "string",
+            "pattern": "^[0-9]+$",
+            "example": "1"
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "subjectId",
+          "semesterId"
+        ],
+        "additionalProperties": false,
+        "example": {
+          "subjectId": "1",
+          "semesterId": "1",
+          "isActive": true
+        }
+      },
+      "UpdateSubjectOfferingRequest": {
+        "type": "object",
+        "properties": {
+          "isActive": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "isActive"
+        ],
+        "additionalProperties": false,
+        "example": {
+          "isActive": false
+        }
+      },
+      "CreateTeacherAssignmentRequest": {
+        "type": "object",
+        "properties": {
+          "teacherId": {
+            "type": "string",
+            "pattern": "^[0-9]+$",
+            "example": "1"
+          },
+          "classId": {
+            "type": "string",
+            "pattern": "^[0-9]+$",
+            "example": "1"
+          },
+          "subjectId": {
+            "type": "string",
+            "pattern": "^[0-9]+$",
+            "example": "1"
+          },
+          "academicYearId": {
+            "type": "string",
+            "pattern": "^[0-9]+$",
+            "example": "1"
+          }
+        },
+        "required": [
+          "teacherId",
+          "classId",
+          "subjectId",
+          "academicYearId"
+        ],
+        "additionalProperties": false,
+        "example": {
+          "teacherId": "47",
+          "classId": "1",
+          "subjectId": "1",
+          "academicYearId": "1"
+        }
+      },
+      "UpdateTeacherAssignmentRequest": {
+        "type": "object",
+        "properties": {
+          "teacherId": {
+            "type": "string",
+            "pattern": "^[0-9]+$",
+            "example": "1"
+          },
+          "classId": {
+            "type": "string",
+            "pattern": "^[0-9]+$",
+            "example": "1"
+          },
+          "subjectId": {
+            "type": "string",
+            "pattern": "^[0-9]+$",
+            "example": "1"
+          },
+          "academicYearId": {
+            "type": "string",
+            "pattern": "^[0-9]+$",
+            "example": "1"
+          }
+        },
+        "additionalProperties": false,
+        "example": {
+          "classId": "2",
+          "subjectId": "4",
+          "academicYearId": "1"
+        }
+      },
+      "CreateSupervisorAssignmentRequest": {
+        "type": "object",
+        "properties": {
+          "supervisorId": {
+            "type": "string",
+            "pattern": "^[0-9]+$",
+            "example": "1"
+          },
+          "classId": {
+            "type": "string",
+            "pattern": "^[0-9]+$",
+            "example": "1"
+          },
+          "academicYearId": {
+            "type": "string",
+            "pattern": "^[0-9]+$",
+            "example": "1"
+          }
+        },
+        "required": [
+          "supervisorId",
+          "classId",
+          "academicYearId"
+        ],
+        "additionalProperties": false,
+        "example": {
+          "supervisorId": "50",
+          "classId": "1",
+          "academicYearId": "1"
+        }
+      },
+      "UpdateSupervisorAssignmentRequest": {
+        "type": "object",
+        "properties": {
+          "supervisorId": {
+            "type": "string",
+            "pattern": "^[0-9]+$",
+            "example": "1"
+          },
+          "classId": {
+            "type": "string",
+            "pattern": "^[0-9]+$",
+            "example": "1"
+          },
+          "academicYearId": {
+            "type": "string",
+            "pattern": "^[0-9]+$",
+            "example": "1"
+          }
+        },
+        "additionalProperties": false,
+        "example": {
+          "classId": "2",
+          "academicYearId": "1"
+        }
+      },
+      "ActiveAcademicContextRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "academicYearId": "1",
+          "semesterId": "2"
+        }
+      },
+      "CreateStudentRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "academicNo": "SEED-STU-010",
+          "fullName": "طالب جديد",
+          "dateOfBirth": "2018-09-10",
+          "gender": "male",
+          "classId": "1",
+          "status": "active",
+          "enrollmentDate": "2025-09-01"
+        }
+      },
+      "UpdateStudentRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "fullName": "طالب محدث",
+          "status": "suspended"
+        }
+      },
+      "LinkStudentParentRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "parentId": "48",
+          "relationType": "mother",
+          "isPrimary": false
+        }
+      },
+      "PromoteStudentRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "toClassId": "2",
+          "academicYearId": "2",
+          "notes": "ترقية إلى الصف التالي"
+        }
+      },
+      "CreateStudentAcademicEnrollmentRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "academicYearId": "2",
+          "classId": "2"
+        }
+      },
+      "UpdateStudentAcademicEnrollmentRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "classId": "3"
+        }
+      },
+      "BulkStudentAcademicEnrollmentsRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "items": [
+            {
+              "studentId": "1",
+              "academicYearId": "2",
+              "classId": "2"
+            },
+            {
+              "studentId": "2",
+              "academicYearId": "2",
+              "classId": "2"
+            }
+          ]
+        }
+      },
+      "CreateAssessmentTypeRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "code": "QUIZ",
+          "name": "Quiz",
+          "description": "Short quiz",
+          "isActive": true
+        }
+      },
+      "CreateAssessmentRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "assessmentTypeId": "1",
+          "classId": "1",
+          "subjectId": "1",
+          "teacherId": "47",
+          "academicYearId": "1",
+          "semesterId": "1",
+          "title": "اختبار قصير 2",
+          "description": "الوحدة الثانية",
+          "maxScore": 20,
+          "weight": 10,
+          "assessmentDate": "2026-03-30",
+          "isPublished": true
+        }
+      },
+      "SaveAssessmentScoresRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "records": [
+            {
+              "studentId": "1",
+              "score": 18,
+              "remarks": "ممتاز"
+            },
+            {
+              "studentId": "2",
+              "score": 14,
+              "remarks": "جيد"
+            }
+          ]
+        }
+      },
+      "UpdateStudentAssessmentScoreRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "score": 19,
+          "remarks": "تحسن واضح"
+        }
+      },
+      "CreateAttendanceSessionRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "classId": "1",
+          "subjectId": "1",
+          "academicYearId": "1",
+          "semesterId": "1",
+          "sessionDate": "2026-03-30",
+          "periodNo": 1,
+          "title": "حصة الرياضيات",
+          "notes": "اختبار سريع",
+          "teacherId": "47"
+        }
+      },
+      "SaveAttendanceRecordsRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "records": [
+            {
+              "studentId": "1",
+              "status": "present"
+            },
+            {
+              "studentId": "2",
+              "status": "absent",
+              "notes": "غياب بدون عذر"
+            }
+          ]
+        }
+      },
+      "UpdateAttendanceRecordRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "status": "late",
+          "notes": "وصل متأخرًا"
+        }
+      },
+      "CreateBehaviorCategoryRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "code": "NEG-001",
+          "name": "تأخر متكرر",
+          "behaviorType": "negative",
+          "defaultSeverity": 3,
+          "isActive": true
+        }
+      },
+      "CreateBehaviorRecordRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "studentId": "1",
+          "behaviorCategoryId": "1",
+          "academicYearId": "1",
+          "semesterId": "1",
+          "description": "تأخر عن الطابور",
+          "severity": 3,
+          "behaviorDate": "2026-03-30",
+          "teacherId": "47"
+        }
+      },
+      "UpdateBehaviorRecordRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "severity": 2,
+          "description": "تم تعديل الملاحظة"
+        }
+      },
+      "CreateBusRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "plateNumber": "SEED-1004",
+          "driverId": "1004",
+          "capacity": 45,
+          "status": "active"
+        }
+      },
+      "CreateRouteRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "routeName": "SEED Route 4",
+          "startPoint": "School",
+          "endPoint": "District D",
+          "estimatedDurationMinutes": 40,
+          "isActive": true
+        }
+      },
+      "CreateRouteStopRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "stopName": "Stop 4",
+          "latitude": 15.37,
+          "longitude": 44.19,
+          "stopOrder": 4
+        }
+      },
+      "CreateTransportAssignmentRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "studentId": "1",
+          "routeId": "1",
+          "stopId": "1",
+          "startDate": "2026-03-30",
+          "endDate": null
+        }
+      },
+      "DeactivateTransportAssignmentRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "endDate": "2026-03-30"
+        }
+      },
+      "CreateTransportRouteAssignmentRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "busId": "1",
+          "routeId": "1",
+          "startDate": "2026-03-30",
+          "endDate": null
+        }
+      },
+      "DeactivateTransportRouteAssignmentRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "endDate": "2026-03-30"
+        }
+      },
+      "CreateTripRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "busId": "1",
+          "routeId": "1",
+          "tripDate": "2026-03-30",
+          "tripType": "pickup"
+        }
+      },
+      "EnsureDailyTripRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "routeAssignmentId": "1",
+          "tripDate": "2026-03-30",
+          "tripType": "pickup"
+        }
+      },
+      "RecordTripLocationRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "latitude": 15.3694,
+          "longitude": 44.191
+        }
+      },
+      "CreateTripStudentEventRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "studentId": "1",
+          "eventType": "dropped_off",
+          "stopId": "1",
+          "notes": "تم النزول بنجاح"
+        }
+      },
+      "SaveStudentHomeLocationRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "addressLabel": "Student Home 1",
+          "addressText": "Nearby the local market",
+          "latitude": 15.3701,
+          "longitude": 44.1921,
+          "status": "approved",
+          "notes": null
+        }
+      },
+      "SendMessageRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "receiverUserId": "20",
+          "messageBody": "رسالة مباشرة تجريبية"
+        }
+      },
+      "SendBulkMessageRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "receiverUserIds": [
+            "20"
+          ],
+          "targetRoles": [
+            "teacher",
+            "supervisor"
+          ],
+          "messageBody": "رسالة جماعية منسوخة كرسائل فردية"
+        }
+      },
+      "CreateAnnouncementRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "title": "[Seed] New notice",
+          "content": "إعلان موجّه للمعلمين والمشرفين",
+          "targetRoles": [
+            "teacher",
+            "supervisor"
+          ],
+          "expiresAt": "2026-04-01T00:00:00.000Z"
+        }
+      },
+      "CreateNotificationRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "userId": "20",
+          "title": "إشعار يدوي",
+          "message": "رسالة إشعار يدوية",
+          "notificationType": "manual",
+          "referenceType": null,
+          "referenceId": null
+        }
+      },
+      "CreateBulkNotificationRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "userIds": [
+            "20"
+          ],
+          "targetRoles": [
+            "parent"
+          ],
+          "title": "إشعار جماعي",
+          "message": "هذا الإشعار يصل كملاحظات فردية",
+          "notificationType": "manual",
+          "referenceType": null,
+          "referenceId": null
+        }
+      },
+      "CreateHomeworkRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "teacherId": "47",
+          "classId": "1",
+          "subjectId": "1",
+          "academicYearId": "1",
+          "semesterId": "1",
+          "title": "واجب الرياضيات 2",
+          "description": "حل الصفحات 12-14",
+          "assignedDate": "2026-03-30",
+          "dueDate": "2026-03-28"
+        }
+      },
+      "SaveHomeworkSubmissionsRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "example": {
+          "records": [
+            {
+              "studentId": "1",
+              "status": "submitted",
+              "submittedAt": "2026-03-30",
+              "notes": "تم التسليم"
+            },
+            {
+              "studentId": "2",
+              "status": "late",
+              "submittedAt": "2026-03-30",
+              "notes": "تسليم متأخر"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "paths": {
+    "/auth/change-password": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Change Password",
+        "description": "Change the current authenticated user password.\n\nAllowed roles: admin, parent, teacher, supervisor, driver.",
+        "x-allowed-roles": [
+          "admin",
+          "parent",
+          "teacher",
+          "supervisor",
+          "driver"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "const": true
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "null"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "message",
+                    "data"
+                  ]
+                },
+                "example": {
+                  "success": true,
+                  "message": "Password changed successfully",
+                  "data": null
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Validation failed",
+                  "errors": [
+                    {
+                      "field": "fieldName",
+                      "code": "invalid_type",
+                      "message": "Validation error example"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication is missing or expired",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Unauthorized",
+                  "errors": [
+                    {
+                      "code": "UNAUTHORIZED",
+                      "message": "Authentication is required"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authenticated but not allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Forbidden",
+                  "errors": [
+                    {
+                      "code": "FORBIDDEN",
+                      "message": "You do not have permission to access this resource"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordRequest"
+              },
+              "example": {
+                "currentPassword": "{{loginPassword}}",
+                "newPassword": "{{newPassword}}"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/forgot-password": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Forgot Password",
+        "description": "Request a password reset token for an active account. Staging usually does not expose resetToken in the response.\n\nPublic endpoint.",
+        "x-allowed-roles": [
+          "public"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "const": true
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/GenericObject"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "message",
+                    "data"
+                  ]
+                },
+                "example": {
+                  "success": true,
+                  "message": "Password reset requested successfully",
+                  "data": {
+                    "name": "Ishraf Platform Backend",
+                    "environment": "staging"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Validation failed",
+                  "errors": [
+                    {
+                      "field": "fieldName",
+                      "code": "invalid_type",
+                      "message": "Validation error example"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit reached",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Too Many Requests",
+                  "errors": [
+                    {
+                      "code": "TOO_MANY_REQUESTS",
+                      "message": "Please try again later"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForgotPasswordRequest"
+              },
+              "example": {
+                "identifier": "{{loginIdentifier}}"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Login",
+        "description": "Authenticate with email or phone and issue access and refresh tokens.\n\nPublic endpoint.",
+        "x-allowed-roles": [
+          "public"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "const": true
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/GenericObject"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "message",
+                    "data"
+                  ]
+                },
+                "example": {
+                  "success": true,
+                  "message": "Login successful",
+                  "data": {
+                    "id": "1",
+                    "fullName": "أيمن أحمد محسن الذاهبي",
+                    "email": "mod87521@gmail.com",
+                    "phone": null,
+                    "role": "admin",
+                    "isActive": true,
+                    "createdAt": "2026-03-30T12:00:00.000Z",
+                    "updatedAt": "2026-03-30T12:00:00.000Z"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Validation failed",
+                  "errors": [
+                    {
+                      "field": "fieldName",
+                      "code": "invalid_type",
+                      "message": "Validation error example"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit reached",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Too Many Requests",
+                  "errors": [
+                    {
+                      "code": "TOO_MANY_REQUESTS",
+                      "message": "Please try again later"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              },
+              "example": {
+                "identifier": "{{loginIdentifier}}",
+                "password": "{{loginPassword}}"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Logout",
+        "description": "Revoke the provided refresh token.\n\nPublic endpoint.",
+        "x-allowed-roles": [
+          "public"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "const": true
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "null"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "message",
+                    "data"
+                  ]
+                },
+                "example": {
+                  "success": true,
+                  "message": "Logout successful",
+                  "data": null
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Validation failed",
+                  "errors": [
+                    {
+                      "field": "fieldName",
+                      "code": "invalid_type",
+                      "message": "Validation error example"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LogoutRequest"
+              },
+              "example": {
+                "refreshToken": "{{refreshToken}}"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Current User",
+        "description": "Return the authenticated active user profile used for frontend bootstrap.\n\nAllowed roles: admin, parent, teacher, supervisor, driver.",
+        "x-allowed-roles": [
+          "admin",
+          "parent",
+          "teacher",
+          "supervisor",
+          "driver"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "const": true
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/GenericObject"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "message",
+                    "data"
+                  ]
+                },
+                "example": {
+                  "success": true,
+                  "message": "Current user fetched successfully",
+                  "data": {
+                    "id": "1",
+                    "fullName": "أيمن أحمد محسن الذاهبي",
+                    "email": "mod87521@gmail.com",
+                    "phone": null,
+                    "role": "admin",
+                    "isActive": true,
+                    "createdAt": "2026-03-30T12:00:00.000Z",
+                    "updatedAt": "2026-03-30T12:00:00.000Z"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication is missing or expired",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Unauthorized",
+                  "errors": [
+                    {
+                      "code": "UNAUTHORIZED",
+                      "message": "Authentication is required"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authenticated but not allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Forbidden",
+                  "errors": [
+                    {
+                      "code": "FORBIDDEN",
+                      "message": "You do not have permission to access this resource"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Refresh Token",
+        "description": "Exchange a valid refresh token for a fresh access/refresh pair.\n\nPublic endpoint.",
+        "x-allowed-roles": [
+          "public"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "const": true
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/GenericObject"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "message",
+                    "data"
+                  ]
+                },
+                "example": {
+                  "success": true,
+                  "message": "Token refreshed successfully",
+                  "data": {
+                    "id": "1",
+                    "fullName": "أيمن أحمد محسن الذاهبي",
+                    "email": "mod87521@gmail.com",
+                    "phone": null,
+                    "role": "admin",
+                    "isActive": true,
+                    "createdAt": "2026-03-30T12:00:00.000Z",
+                    "updatedAt": "2026-03-30T12:00:00.000Z"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Validation failed",
+                  "errors": [
+                    {
+                      "field": "fieldName",
+                      "code": "invalid_type",
+                      "message": "Validation error example"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshTokenRequest"
+              },
+              "example": {
+                "refreshToken": "{{refreshToken}}"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/reset-password": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Reset Password",
+        "description": "Reset the password using a valid reset token. Successful reset revokes existing refresh tokens.\n\nPublic endpoint.",
+        "x-allowed-roles": [
+          "public"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "const": true
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "null"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "message",
+                    "data"
+                  ]
+                },
+                "example": {
+                  "success": true,
+                  "message": "Password reset successfully",
+                  "data": null
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Validation failed",
+                  "errors": [
+                    {
+                      "field": "fieldName",
+                      "code": "invalid_type",
+                      "message": "Validation error example"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit reached",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Too Many Requests",
+                  "errors": [
+                    {
+                      "code": "TOO_MANY_REQUESTS",
+                      "message": "Please try again later"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordRequest"
+              },
+              "example": {
+                "token": "{{resetToken}}",
+                "newPassword": "{{newPassword}}"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
